@@ -69,7 +69,10 @@ export default function AuthScreen({ onBack }: Props) {
       return;
     }
     setLoading(true);
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
     setLoading(false);
     if (oauthError) setError(oauthError.message);
     // On success this redirects away and back — UserContext picks up the session on return.
