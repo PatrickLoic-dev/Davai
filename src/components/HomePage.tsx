@@ -1,368 +1,297 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { ArrowRight, BookOpen, Layers, BookText, PenLine, Trophy, Zap, Volume2, ChevronRight } from 'lucide-react';
-import { BearMark } from './Logo';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, BookOpen, Layers, PenLine, Volume2, Zap, Star } from 'lucide-react';
+import { AppLogo, BearMark } from './Logo';
+
+const LIME = '#C8FF00';
 
 interface Props {
   onStart: () => void;
   onLogin: () => void;
 }
 
-const FLOATERS = [
-  { l: 'А', x: 7,  y: 10, s: 8,  o: 0.055, d: 9  },
-  { l: 'Б', x: 87, y: 7,  s: 6,  o: 0.04,  d: 11 },
-  { l: 'В', x: 14, y: 72, s: 7,  o: 0.05,  d: 8  },
-  { l: 'Г', x: 75, y: 80, s: 9,  o: 0.038, d: 13 },
-  { l: 'Д', x: 48, y: 4,  s: 5,  o: 0.035, d: 15 },
-  { l: 'Е', x: 93, y: 52, s: 7,  o: 0.045, d: 10 },
-  { l: 'Ж', x: 2,  y: 42, s: 6,  o: 0.04,  d: 12 },
-  { l: 'З', x: 62, y: 88, s: 5,  o: 0.03,  d: 7  },
-  { l: 'И', x: 33, y: 18, s: 4,  o: 0.04,  d: 14 },
-  { l: 'К', x: 80, y: 28, s: 6,  o: 0.05,  d: 9  },
-  { l: 'Л', x: 22, y: 86, s: 8,  o: 0.032, d: 11 },
-  { l: 'М', x: 55, y: 62, s: 5,  o: 0.042, d: 8  },
-];
-
-const TICKER_ITEMS = [
-  '12 000+ apprenants',
-  '★ 4.9 / 5',
-  '33 lettres',
-  '100% gratuit',
-  'A1 certifiable',
-  'Audio natif',
-  'Flashcards SRS',
-  'Gamifié',
-];
-
-const FEATURES = [
-  { n: '01', title: 'Alphabet Cyrillique', sub: '33 lettres. Sons réels. Quiz interactif. Maîtrisez le Cyrillique en une semaine.', Icon: BookOpen, color: '#4338CA' },
-  { n: '02', title: 'Audio Natif', sub: "Chaque lettre, syllabe et mot prononcé. Votre oreille s'entraîne dès le premier jour.", Icon: Volume2, color: '#C8FF00' },
-  { n: '03', title: 'Vocabulaire SRS', sub: '40 mots essentiels sur 5 thèmes. La répétition espacée maximise votre rétention.', Icon: Layers, color: '#7C3AED' },
-  { n: '04', title: 'Grammaire A1', sub: 'Genres, cas, conjugaisons. Chaque règle expliquée avec des exemples en contexte.', Icon: BookText, color: '#F59E0B' },
-  { n: '05', title: 'Exercices Ciblés', sub: 'QCM et textes à trous. Feedback immédiat. Chaque erreur devient une leçon.', Icon: PenLine, color: '#059669' },
-  { n: '06', title: 'Gamification', sub: 'XP, niveaux, séries et 10 badges. Apprendre ne devrait jamais être ennuyeux.', Icon: Trophy, color: '#EF4444' },
-];
-
-const PATH_STEPS = [
-  { n: 1, title: 'Alphabet',   sub: '33 lettres', color: '#4338CA', active: true },
-  { n: 2, title: 'Phonétique', sub: 'Sons clés',  color: '#7C3AED', active: false },
-  { n: 3, title: 'Salutations',sub: 'Vocabulaire',color: '#059669', active: false },
-  { n: 4, title: 'Chiffres',   sub: '0 à 20',     color: '#F59E0B', active: false },
-  { n: 5, title: 'Genres',     sub: 'Grammaire',  color: '#DC2626', active: false },
-  { n: 6, title: 'Cas',        sub: 'Nominatif',  color: '#0891B2', active: false },
-  { n: 7, title: 'Verbes',     sub: 'Présent',    color: '#7C3AED', active: false },
-  { n: 8, title: 'Évaluation', sub: 'Test A1',    color: '#4338CA', active: false },
-];
-
-function useReveal(delay = 0) {
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => el.classList.add('visible'), delay);
-        obs.disconnect();
-      }
-    }, { threshold: 0.1 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [delay]);
-  return ref;
+/* ── Section heading ── */
+function SectionHead({ title, sub }: { title: string; sub?: string }) {
+  return (
+    <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#0A0A0A', margin: '0 0 0.75rem', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+        {title}
+      </h2>
+      {sub && <p style={{ color: '#737373', fontSize: '1rem', margin: 0, maxWidth: '480px', marginInline: 'auto', lineHeight: 1.6 }}>{sub}</p>}
+    </div>
+  );
 }
+
+/* ── Topic card ── */
+function TopicCard({ emoji, title, sub, color }: { emoji: string; title: string; sub: string; color: string }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? '#F7F7F5' : 'white', borderRadius: '16px',
+        border: '1.5px solid #EBEBEB', padding: '1.5rem',
+        cursor: 'default', transition: 'background 0.18s, transform 0.18s',
+        transform: hov ? 'translateY(-3px)' : 'none',
+      }}
+    >
+      <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', marginBottom: '0.9rem' }}>{emoji}</div>
+      <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0A0A0A', marginBottom: '4px', fontFamily: 'var(--font-display)' }}>{title}</div>
+      <div style={{ fontSize: '0.8rem', color: '#8A8A8A' }}>{sub}</div>
+    </div>
+  );
+}
+
+const TOPICS = [
+  { emoji: '🔤', title: 'Alphabet cyrillique', sub: '33 lettres avec audio',        color: '#7C3AED' },
+  { emoji: '💬', title: 'Vocabulaire',         sub: '40 mots, 5 thèmes',            color: '#D97706' },
+  { emoji: '📖', title: 'Grammaire',           sub: 'Leçons progressives A1',       color: '#16A34A' },
+  { emoji: '✏️', title: 'Exercices',           sub: 'QCM et textes à trous',        color: '#DC2626' },
+  { emoji: '🔊', title: 'Prononciation',       sub: 'Audio natif pour chaque mot',  color: '#0891B2' },
+  { emoji: '🏆', title: 'Gamification',        sub: 'XP, niveaux et badges',        color: '#C2410C' },
+];
+
+const METHODS = [
+  { n: '01', title: 'Commencez par les bases', body: "L'alphabet cyrillique d'abord — chaque lettre avec sa prononciation audio.", Icon: Volume2 },
+  { n: '02', title: 'Répétition espacée (SRS)', body: "Les flashcards s'adaptent à votre rythme pour ancrer le vocabulaire en mémoire.", Icon: Zap },
+  { n: '03', title: 'Pratiquez et gagnez des XP', body: 'Exercices interactifs, badges déblocables et streak quotidien pour rester motivé.', Icon: Star },
+];
 
 export default function HomePage({ onStart, onLogin }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [navSolid, setNavSolid] = useState(false);
-  const [heroVisible, setHeroVisible] = useState(false);
 
-  const methodRef  = useReveal() as React.RefObject<HTMLElement>;
-  const featuresRef = useReveal(100) as React.RefObject<HTMLElement>;
-  const pathRef    = useReveal(50)  as React.RefObject<HTMLElement>;
-  const ctaRef     = useReveal()    as React.RefObject<HTMLElement>;
-
+  /* Scroll-reveal observer */
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const fn = () => setNavSolid(el.scrollTop > 60);
-    el.addEventListener('scroll', fn, { passive: true });
-    return () => el.removeEventListener('scroll', fn);
+    const container = containerRef.current;
+    if (!container) return;
+    const onScroll = () => setNavSolid(container.scrollTop > 40);
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {
-    const t = setTimeout(() => setHeroVisible(true), 80);
-    return () => clearTimeout(t);
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { (e.target as HTMLElement).classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    containerRef.current?.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    return () => io.disconnect();
   }, []);
 
-  const scrollTo = useCallback((id: string) => {
-    const el = document.getElementById(id);
-    el?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
-
-  /* shared transition helper */
-  const show = (extra = 0) => ({
-    opacity: heroVisible ? 1 : 0,
-    transform: heroVisible ? 'translateY(0)' : 'translateY(28px)',
-    transition: `opacity 0.65s ${extra}s ease, transform 0.65s ${extra}s ease`,
-  });
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <div ref={containerRef} style={{ height: '100%', overflowY: 'auto', background: '#08080F', color: '#F0F0F0' }}>
+    <div ref={containerRef} style={{ height: '100%', overflowY: 'auto', background: '#FAFAF8', fontFamily: 'var(--font-ui)', color: '#0A0A0A' }}>
 
-      {/* ── STICKY NAV ── */}
-      <nav style={{
+      {/* ── NAV ── */}
+      <header style={{
         position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 clamp(1.25rem, 5vw, 4rem)', height: '64px',
+        background: navSolid ? 'rgba(250,250,248,0.92)' : 'transparent',
+        backdropFilter: navSolid ? 'blur(16px)' : 'none',
+        borderBottom: navSolid ? '1px solid #EBEBEB' : 'none',
+        transition: 'background 0.3s, border-color 0.3s',
+        padding: '0 clamp(1.25rem, 5vw, 4rem)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        background: navSolid ? 'rgba(8,8,15,0.92)' : 'transparent',
-        backdropFilter: navSolid ? 'blur(20px)' : 'none',
-        borderBottom: navSolid ? '1px solid rgba(255,255,255,0.06)' : 'none',
-        transition: 'background 0.3s, backdrop-filter 0.3s',
+        height: '64px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-          <BearMark size={34} variant="light" />
-          <span style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.04em', color: 'white' }}>DAVAI</span>
-        </div>
-
-        {/* Desktop links — hidden on mobile */}
-        <div className="hp-links" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          {[['method', 'Méthode'], ['features', 'Fonctionnalités'], ['path', 'Parcours']].map(([id, label]) => (
+        <AppLogo size={26} textSize="0.92rem" />
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '2rem' }} className="hp-links">
+          {[['method', 'Méthode'], ['modules', 'Modules'], ['path', 'Parcours']].map(([id, label]) => (
             <button key={id} onClick={() => scrollTo(id)}
-              style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-ui)', fontSize: '0.87rem', fontWeight: 500, cursor: 'pointer', transition: 'color 0.18s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'white'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'}
+              style={{ background: 'none', border: 'none', color: '#5A5A5A', fontFamily: 'var(--font-ui)', fontSize: '0.87rem', fontWeight: 500, cursor: 'pointer', transition: 'color 0.15s' }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0A0A0A'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#5A5A5A'}
             >{label}</button>
           ))}
-        </div>
-
+        </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button onClick={onLogin} className="hp-login"
-            style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-ui)', fontSize: '0.87rem', cursor: 'pointer', transition: 'color 0.18s' }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'white'}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'}
-          >Se connecter</button>
+          <button onClick={onLogin}
+            style={{ background: 'none', border: '1.5px solid #D0D0D0', color: '#0A0A0A', padding: '0.45rem 1rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontSize: '0.84rem', fontWeight: 600, cursor: 'pointer', transition: 'border-color 0.15s' }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = '#0A0A0A'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = '#D0D0D0'}
+          >Connexion</button>
           <button onClick={onStart}
-            style={{ background: '#C8FF00', color: '#08080F', border: 'none', padding: '0.5rem 1.2rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: '0.87rem', cursor: 'pointer', transition: 'transform 0.15s, box-shadow 0.15s' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 0 22px rgba(200,255,0,0.35)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
+            style={{ background: '#0A0A0A', color: 'white', border: 'none', padding: '0.45rem 1.1rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontSize: '0.84rem', fontWeight: 600, cursor: 'pointer', transition: 'opacity 0.15s' }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.82'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
           >Commencer</button>
         </div>
-      </nav>
+      </header>
 
       {/* ── HERO ── */}
-      <section id="hero" style={{ minHeight: '100dvh', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(5rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4rem) 4rem', overflow: 'hidden', marginTop: '-64px' }}>
+      <section style={{ padding: 'clamp(3rem, 8vw, 6rem) clamp(1.25rem, 6vw, 4rem)', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'center', minHeight: '80vh' }}>
 
-        {/* Orbs */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} aria-hidden="true">
-          <div style={{ position: 'absolute', width: 'clamp(380px, 50vw, 680px)', height: 'clamp(380px, 50vw, 680px)', borderRadius: '50%', bottom: '-15%', left: '-8%', background: 'radial-gradient(circle, rgba(200,255,0,0.13) 0%, transparent 65%)' }} />
-          <div style={{ position: 'absolute', width: 'clamp(320px, 44vw, 580px)', height: 'clamp(320px, 44vw, 580px)', borderRadius: '50%', top: '-10%', right: '-6%', background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 65%)' }} />
-          <div style={{ position: 'absolute', inset: 0, opacity: 0.025, backgroundImage: 'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '64px 64px' }} />
-        </div>
-
-        {/* Floating Cyrillic */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} aria-hidden="true">
-          {FLOATERS.map(({ l, x, y, s, o, d }, i) => (
-            <div key={i} style={{ position: 'absolute', left: `${x}%`, top: `${y}%`, fontSize: `${s}rem`, opacity: o, color: 'white', fontFamily: 'var(--font-cyrillic)', animationName: 'drift', animationDuration: `${d}s`, animationTimingFunction: 'ease-in-out', animationIterationCount: 'infinite', animationDirection: 'alternate', animationDelay: `${i * 0.6}s`, userSelect: 'none' }}>{l}</div>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: '920px', width: '100%' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '100px', background: 'rgba(200,255,0,0.08)', border: '1px solid rgba(200,255,0,0.2)', marginBottom: '2.25rem', ...show(0) }}>
-            <Zap size={12} color="#C8FF00" />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.14em', color: '#C8FF00', textTransform: 'uppercase' }}>Entraînement Linguistique · A1</span>
-          </div>
-
-          <h1 style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: 'clamp(3.8rem, 12vw, 10.5rem)', lineHeight: 0.9, letterSpacing: '-0.01em', textTransform: 'uppercase', margin: '0 0 1.5rem', ...show(0.1) }}>
-            <span style={{ display: 'block', color: 'white' }}>PARLEZ</span>
-            <span style={{ display: 'block', color: '#C8FF00' }}>RUSSE.</span>
+        {/* Left: text */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', lineHeight: 1.08, letterSpacing: '-0.03em', margin: 0, color: '#0A0A0A' }}>
+            Apprenez le<br />
+            russe,<br />
+            <span style={{ color: LIME, WebkitTextStroke: '1px #8AAA00' }}>davai&nbsp;!</span>
           </h1>
 
-          <p style={{ fontSize: 'clamp(1rem, 2.2vw, 1.2rem)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: '520px', margin: '0 auto 2.5rem', ...show(0.2) }}>
-            33 lettres. 40 mots essentiels. 8 étapes progressives.
-            La méthode d'apprentissage la plus complète pour débutants — 100% gratuite.
+          <p style={{ fontSize: 'clamp(1rem, 2vw, 1.1rem)', color: '#5A5A5A', lineHeight: 1.7, margin: 0, maxWidth: '420px' }}>
+            Alphabet cyrillique, vocabulaire et grammaire — apprenez à votre rythme avec audio, répétition espacée et exercices interactifs.
           </p>
 
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', ...show(0.3) }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <button onClick={onStart}
-              className="neon-pulse"
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#C8FF00', color: '#08080F', border: 'none', padding: '0.9rem 2.1rem', borderRadius: '100px', fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: 'clamp(0.9rem, 2vw, 1.05rem)', letterSpacing: '0.04em', textTransform: 'uppercase', cursor: 'pointer', transition: 'transform 0.15s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform = 'scale(1.04)'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform = 'scale(1)'}
-            >Commencer gratuitement <ArrowRight size={16} /></button>
-            <button onClick={onLogin}
-              style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '0.9rem 1.75rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 'clamp(0.87rem, 2vw, 0.95rem)', cursor: 'pointer', backdropFilter: 'blur(8px)', transition: 'background 0.2s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.09)'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)'}
-            >J'ai déjà un compte</button>
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#0A0A0A', color: 'white', border: 'none', padding: '0.85rem 1.75rem', borderRadius: '100px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'opacity 0.15s' }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.82'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+            >
+              Commencer gratuitement <ArrowRight size={16} />
+            </button>
           </div>
 
-          <div style={{ display: 'flex', gap: 'clamp(1.5rem, 4vw, 3rem)', justifyContent: 'center', marginTop: '3.5rem', flexWrap: 'wrap', ...show(0.45) }}>
-            {[['12 000+', 'Apprenants'], ['4.9★', 'Note'], ['100%', 'Gratuit']].map(([v, l]) => (
-              <div key={l} style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', color: 'white' }}>{v}</div>
-                <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '2px' }}>{l}</div>
+          {/* Social proof row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+            {[['33', 'lettres'], ['40+', 'mots'], ['10', 'badges']].map(([n, l]) => (
+              <div key={l} style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.4rem', color: '#0A0A0A' }}>{n}</span>
+                <span style={{ fontSize: '0.8rem', color: '#8A8A8A' }}>{l}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Scroll cue */}
-        <div style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.2)', fontSize: '0.65rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', opacity: heroVisible ? 1 : 0, transition: 'opacity 1s 1.1s ease' }}>
-          <div style={{ width: '1px', height: '40px', background: 'linear-gradient(to bottom, transparent, rgba(200,255,0,0.45))', animationName: 'float', animationDuration: '2s', animationTimingFunction: 'ease-in-out', animationIterationCount: 'infinite' }} />
-          Défiler
+        {/* Right: illustration */}
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '420px' }}>
+          {/* Lime blob */}
+          <div style={{ position: 'absolute', width: '340px', height: '340px', borderRadius: '50%', background: LIME, opacity: 0.22, filter: 'blur(48px)', zIndex: 0 }} />
+          <div style={{ position: 'absolute', width: '260px', height: '260px', borderRadius: '50%', background: LIME, zIndex: 0 }} />
+
+          {/* Bear mascot */}
+          <BearMark size={200} bodyColor="#0A0A0A" cutoutColor={LIME} style={{ position: 'relative', zIndex: 1 }} />
+
         </div>
       </section>
-
-      {/* ── TICKER ── */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(200,255,0,0.03)', overflow: 'hidden', height: '48px', display: 'flex', alignItems: 'center' }}>
-        <div className="animate-ticker" style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', willChange: 'transform' }}>
-          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-            <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '1.5rem' }}>
-              <span style={{ fontFamily: 'var(--font-sport)', fontWeight: 700, fontSize: '0.82rem', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', paddingLeft: '2.5rem' }}>{item}</span>
-              <span style={{ color: '#C8FF00', fontSize: '0.45rem' }}>◆</span>
-            </span>
-          ))}
-        </div>
-      </div>
 
       {/* ── METHOD ── */}
-      <section id="method" ref={methodRef as React.RefObject<HTMLDivElement>} className="reveal" style={{ padding: 'clamp(5rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4rem)' }}>
+      <section id="method" style={{ background: '#F4F4F0', padding: 'clamp(3rem, 7vw, 5rem) clamp(1.25rem, 6vw, 4rem)' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '3.5rem' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.16em', color: '#C8FF00', textTransform: 'uppercase', marginBottom: '1rem' }}>— La méthode</div>
-            <h2 style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: 'clamp(2.5rem, 6vw, 5.5rem)', lineHeight: 0.93, textTransform: 'uppercase', color: 'white', margin: 0 }}>
-              APPRENDRE<br /><span style={{ color: 'rgba(255,255,255,0.22)' }}>COMME UN</span> <span style={{ color: '#C8FF00' }}>PRO.</span>
-            </h2>
+          <div className="reveal">
+            <SectionHead title="La méthode Davai" sub="Trois piliers pour apprendre le russe durablement, sans surcharge cognitive." />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1px', background: 'rgba(255,255,255,0.06)', borderRadius: '18px', overflow: 'hidden' }}>
-            {[
-              { n: '01', title: 'Progressif', body: 'Chaque étape se déverrouille quand la précédente est maîtrisée. Pas de saut, pas de lacune.' },
-              { n: '02', title: 'Répétition Espacée', body: "L'algorithme SRS revoit les mots au bon moment. Votre mémoire à long terme est activée." },
-              { n: '03', title: 'Immersif', body: 'Audio, écriture, lecture, exercices. Toutes les compétences travaillées en parallèle.' },
-            ].map(({ n, title, body }) => (
-              <div key={n} style={{ background: '#0E0E1A', padding: 'clamp(1.75rem, 3vw, 2.5rem)', position: 'relative', overflow: 'hidden', transition: 'background 0.2s' }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#141428'}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#0E0E1A'}>
-                <div style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: '4.5rem', color: 'rgba(200,255,0,0.06)', position: 'absolute', top: '0.5rem', right: '1rem', lineHeight: 1, userSelect: 'none' }}>{n}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.13em', color: '#C8FF00', textTransform: 'uppercase', marginBottom: '0.7rem' }}>{n}</div>
-                <h3 style={{ fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', textTransform: 'uppercase', color: 'white', margin: '0 0 0.65rem', letterSpacing: '0.01em' }}>{title}</h3>
-                <p style={{ color: 'rgba(255,255,255,0.42)', lineHeight: 1.68, fontSize: '0.88rem', margin: 0 }}>{body}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            {METHODS.map(({ n, title, body, Icon }, i) => (
+              <div key={n} className="reveal" style={{ animationDelay: `${i * 80}ms`, background: 'white', borderRadius: '20px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', border: '1px solid #EBEBEB' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, color: '#B0B0B0', letterSpacing: '0.08em' }}>{n}</span>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `${LIME}25`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon size={18} style={{ color: '#4A6A00' }} />
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.05rem', color: '#0A0A0A', marginBottom: '0.5rem' }}>{title}</div>
+                  <p style={{ fontSize: '0.88rem', color: '#6A6A6A', lineHeight: 1.65, margin: 0 }}>{body}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
-      <section id="features" ref={featuresRef as React.RefObject<HTMLDivElement>} className="reveal" style={{ padding: 'clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 4rem)', background: '#08080F' }}>
+      {/* ── MODULES ── */}
+      <section id="modules" style={{ padding: 'clamp(3rem, 7vw, 5rem) clamp(1.25rem, 6vw, 4rem)' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '3.5rem' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.16em', color: '#C8FF00', textTransform: 'uppercase', marginBottom: '1rem' }}>— Fonctionnalités</div>
-            <h2 style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: 'clamp(2.5rem, 5vw, 4.8rem)', lineHeight: 0.93, textTransform: 'uppercase', color: 'white', margin: 0 }}>
-              TOUT CE DONT<br />VOUS AVEZ BESOIN.
-            </h2>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 290px), 1fr))', gap: '1px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px', overflow: 'hidden' }}>
-            {FEATURES.map(({ n, title, sub, Icon, color }) => (
-              <div key={n} style={{ background: '#0E0E1A', padding: 'clamp(1.5rem, 2.5vw, 2rem)', display: 'flex', flexDirection: 'column', gap: '1rem', transition: 'background 0.22s', cursor: 'default' }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#141428'}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#0E0E1A'}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: `${color}14`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}22` }}>
-                    <Icon size={20} color={color === '#C8FF00' ? '#9aCC00' : color} />
-                  </div>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.18)' }}>{n}</span>
-                </div>
-                <div>
-                  <h3 style={{ fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: 'clamp(1rem, 2vw, 1.1rem)', textTransform: 'uppercase', color: 'white', margin: '0 0 0.4rem', letterSpacing: '0.025em' }}>{title}</h3>
-                  <p style={{ color: 'rgba(255,255,255,0.38)', lineHeight: 1.62, fontSize: '0.84rem', margin: 0 }}>{sub}</p>
-                </div>
+          <div className="reveal"><SectionHead title="6 modules complets" sub="De l'alphabet aux exercices — tout ce qu'il faut pour les bases du russe." /></div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))', gap: '1rem' }}>
+            {TOPICS.map((t, i) => (
+              <div key={t.title} className="reveal" style={{ animationDelay: `${i * 60}ms` }}>
+                <TopicCard {...t} />
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── STATS BANNER ── */}
+      <section style={{ background: '#0A0A0A', padding: 'clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 6vw, 4rem)' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem', textAlign: 'center' }}>
+          {[['33', 'Lettres de l\'alphabet'], ['40+', 'Mots essentiels'], ['5', 'Thèmes de vocab'], ['10', 'Badges à débloquer']].map(([n, l]) => (
+            <div key={l} className="reveal">
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(2.2rem, 5vw, 3rem)', color: LIME, lineHeight: 1 }}>{n}</div>
+              <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginTop: '8px' }}>{l}</div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* ── PATH PREVIEW ── */}
-      <section id="path" ref={pathRef as React.RefObject<HTMLDivElement>} className="reveal" style={{ padding: 'clamp(5rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4rem)', background: '#0B0B15' }}>
+      <section id="path" style={{ padding: 'clamp(3rem, 7vw, 5rem) clamp(1.25rem, 6vw, 4rem)', background: '#F4F4F0' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '3.5rem' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.16em', color: '#C8FF00', textTransform: 'uppercase', marginBottom: '1rem' }}>— Parcours A1</div>
-            <h2 style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: 'clamp(2.5rem, 5vw, 4.8rem)', lineHeight: 0.93, textTransform: 'uppercase', color: 'white', margin: '0 0 1rem' }}>
-              8 ÉTAPES.<br />1 OBJECTIF.
-            </h2>
-            <p style={{ color: 'rgba(255,255,255,0.38)', maxWidth: '420px', lineHeight: 1.68, fontSize: '0.92rem' }}>
-              Chaque module se déverrouille après le précédent. Pas de raccourci — juste la progression.
-            </p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 230px), 1fr))', gap: '10px' }}>
-            {PATH_STEPS.map(({ n, title, sub, color, active }, i) => (
-              <div key={n} style={{ background: '#111120', borderRadius: '14px', padding: '1.25rem 1.4rem', border: active ? `1px solid ${color}40` : '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', gap: '0.9rem', opacity: active ? 1 : 0.45 + i * 0.045, transition: 'opacity 0.2s, background 0.2s' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#161628'; (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#111120'; (e.currentTarget as HTMLElement).style.opacity = String(active ? 1 : 0.45 + i * 0.045); }}>
-                <div style={{ width: '38px', height: '38px', borderRadius: '50%', flexShrink: 0, background: active ? color : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: '0.82rem', color: active ? '#08080F' : 'rgba(255,255,255,0.25)', border: active ? 'none' : '1px solid rgba(255,255,255,0.06)' }}>{n}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: 'var(--font-sport)', fontWeight: 700, fontSize: '0.92rem', textTransform: 'uppercase', letterSpacing: '0.03em', color: 'white' }}>{title}</div>
-                  <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>{sub}</div>
+          <div className="reveal"><SectionHead title="Parcours A1 structuré" sub="Progressez étape par étape — chaque module débloque le suivant." /></div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))', gap: '0.875rem' }}>
+            {[
+              { step: '01', label: 'Alphabet', sub: 'Lettres et sons', done: true },
+              { step: '02', label: 'Phonétique', sub: 'Lecture cyrillique', done: false },
+              { step: '03', label: 'Grammaire', sub: 'Genre et pluriel', done: false },
+              { step: '04', label: 'Vocabulaire', sub: 'Mots du quotidien', done: false },
+              { step: '05', label: 'Chiffres', sub: '0 à 100', done: false },
+              { step: '06', label: 'Phrases', sub: 'Se présenter', done: false },
+            ].map(({ step, label, sub, done }, i) => (
+              <div key={step} className="reveal" style={{ animationDelay: `${i * 60}ms`, background: 'white', borderRadius: '14px', padding: '1.25rem', border: `1.5px solid ${done ? LIME : '#EBEBEB'}`, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#B0B0B0', letterSpacing: '0.08em' }}>{step}</span>
+                  {done && <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#4A6A00', background: `${LIME}40`, borderRadius: '100px', padding: '2px 8px', fontFamily: 'var(--font-mono)' }}>FAIT</span>}
                 </div>
-                {active && <ChevronRight size={13} color={color} />}
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.92rem', color: '#0A0A0A' }}>{label}</div>
+                <div style={{ fontSize: '0.76rem', color: '#8A8A8A' }}>{sub}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── FINAL CTA ── */}
-      <section ref={ctaRef as React.RefObject<HTMLDivElement>} className="reveal" style={{ padding: 'clamp(6rem, 12vw, 10rem) clamp(1.25rem, 5vw, 4rem)', background: '#C8FF00', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.06 }} aria-hidden="true">
-          {'РУССКИЙ'.split('').map((l, i) => (
-            <span key={i} style={{ position: 'absolute', fontFamily: 'var(--font-cyrillic)', fontSize: 'clamp(5rem, 10vw, 11rem)', left: `${i * 15}%`, top: '50%', transform: 'translateY(-50%)', color: 'black', userSelect: 'none' }}>{l}</span>
-          ))}
-        </div>
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.16em', color: 'rgba(8,8,15,0.45)', textTransform: 'uppercase', marginBottom: '1.5rem' }}>— Gratuit · Aucune carte requise</div>
-          <h2 style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: 'clamp(3rem, 8vw, 7.5rem)', lineHeight: 0.9, textTransform: 'uppercase', color: '#08080F', margin: '0 0 2rem' }}>
-            PRÊT À<br />COMMENCER ?
-          </h2>
-          <p style={{ color: 'rgba(8,8,15,0.52)', fontSize: 'clamp(0.95rem, 2vw, 1.12rem)', maxWidth: '400px', margin: '0 auto 2.5rem', lineHeight: 1.7 }}>
-            Rejoignez 12 000 apprenants et maîtrisez les bases du russe en 8 semaines.
-          </p>
-          <button onClick={onStart}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#08080F', color: '#C8FF00', border: 'none', padding: '1rem 2.5rem', borderRadius: '100px', fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: 'clamp(0.95rem, 2vw, 1.1rem)', letterSpacing: '0.05em', textTransform: 'uppercase', cursor: 'pointer', transition: 'transform 0.15s, box-shadow 0.15s' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.04)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px rgba(0,0,0,0.22)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
-          >Commencer maintenant <ArrowRight size={18} /></button>
-          <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', marginTop: '2.5rem', flexWrap: 'wrap' }}>
-            {['★★★★★  4.9 / 5', '0 € · Toujours gratuit', 'A1 certifiable'].map(t => (
-              <span key={t} style={{ fontFamily: 'var(--font-ui)', fontSize: '0.82rem', color: 'rgba(8,8,15,0.45)', fontWeight: 500 }}>{t}</span>
-            ))}
+      {/* ── CTA ── */}
+      <section style={{ padding: 'clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 6vw, 4rem)', textAlign: 'center' }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
+          <BearMark size={80} bodyColor="#0A0A0A" cutoutColor="#FAFAF8" />
+          <div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#0A0A0A', margin: '0 0 0.75rem', letterSpacing: '-0.02em', lineHeight: 1.12 }}>
+              Prêt à vous lancer ?
+            </h2>
+            <p style={{ color: '#6A6A6A', fontSize: '1rem', lineHeight: 1.65, margin: 0 }}>
+              Gratuit, sans inscription par carte bancaire.<br />Commencez en moins de 30 secondes.
+            </p>
           </div>
+          <button onClick={onStart}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#0A0A0A', color: 'white', border: 'none', padding: '1rem 2.25rem', borderRadius: '100px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', transition: 'opacity 0.15s' }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.82'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+          >
+            Créer un compte gratuit <ArrowRight size={18} />
+          </button>
         </div>
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ padding: '2rem clamp(1.25rem, 5vw, 4rem)', background: '#08080F', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <BearMark size={26} variant="light" />
-          <span style={{ fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: '0.88rem', color: 'rgba(255,255,255,0.3)' }}>DAVAI</span>
-        </div>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'rgba(255,255,255,0.18)', letterSpacing: '0.06em' }}>© 2026 · Open-source · MIT</span>
+      <footer style={{ borderTop: '1px solid #EBEBEB', padding: '1.75rem clamp(1.25rem, 6vw, 4rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', background: 'white' }}>
+        <AppLogo size={22} textSize="0.82rem" />
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: '#B0B0B0', letterSpacing: '0.06em' }}>© 2026 · Open-source · MIT</span>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
-          {[['method', 'Méthode'], ['features', 'Fonctionnalités'], ['path', 'Parcours']].map(([id, label]) => (
+          {[['method', 'Méthode'], ['modules', 'Modules'], ['path', 'Parcours']].map(([id, label]) => (
             <button key={id} onClick={() => scrollTo(id)}
-              style={{ background: 'none', border: 'none', fontFamily: 'var(--font-ui)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.28)', cursor: 'pointer', transition: 'color 0.18s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.65)'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.28)'}
+              style={{ background: 'none', border: 'none', color: '#8A8A8A', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--font-ui)', transition: 'color 0.15s' }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0A0A0A'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#8A8A8A'}
             >{label}</button>
           ))}
         </div>
       </footer>
 
-      {/* Mobile responsive overrides */}
+      {/* Mobile nav links hidden via CSS */}
       <style>{`
         @media (max-width: 767px) {
           .hp-links { display: none !important; }
-          .hp-login { display: none !important; }
+        }
+        @media (max-width: 900px) {
+          section[style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+            min-height: auto !important;
+          }
         }
       `}</style>
     </div>

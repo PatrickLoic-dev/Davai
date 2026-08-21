@@ -91,22 +91,20 @@ function AppShell() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden', background: 'var(--background)' }}>
+    <div className="app-shell-outer">
       <a href="#main-content" className="sr-only"
         style={{ position: 'absolute', left: '-9999px' }}
         onFocus={e => { e.currentTarget.style.cssText = 'position:fixed;top:1rem;left:1rem;z-index:9999;padding:0.5rem 1rem;background:#0A0A0A;color:white;border-radius:8px;'; }}
         onBlur={e => { e.currentTarget.style.left = '-9999px'; }}
       >Aller au contenu</a>
 
-      {/* Sidebar — hidden on mobile via CSS */}
-      <div className="app-nav-sidebar" style={{ height: '100%', flexShrink: 0 }}>
+      {/* Sidebar box — hidden on mobile via CSS */}
+      <div className="app-nav-sidebar app-sidebar-box">
         <Nav current={view} onChange={setView} onHome={() => setScreen('home')} />
       </div>
 
-      {/* Main content */}
-      <main id="main-content" className="app-main"
-        style={{ flex: 1, overflow: 'hidden', minWidth: 0, display: 'flex', flexDirection: 'column' }}
-      >
+      {/* Main content box */}
+      <main id="main-content" className="app-main app-main-box">
         {viewMap[view]}
       </main>
 
