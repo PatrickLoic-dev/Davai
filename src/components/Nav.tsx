@@ -1,5 +1,6 @@
 import { Map, BookOpen, Layers, BookText, PenLine, Settings, Flame, LogOut } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
+import { AppLogo } from './Logo';
 
 export type View = 'path' | 'alphabet' | 'vocabulary' | 'grammar' | 'exercises' | 'settings';
 
@@ -28,11 +29,10 @@ function SidebarNav({ current, onChange, onHome }: NavProps) {
       {/* Logo */}
       <div style={{ padding: '1.25rem 1rem 1rem', borderBottom: '1px solid #E8E8E8' }}>
         <button onClick={onHome}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: '100%' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           aria-label="Accueil"
         >
-          <div style={{ width: '28px', height: '28px', borderRadius: '7px', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-cyrillic)', fontSize: '0.95rem', color: 'white', flexShrink: 0 }}>Р</div>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.88rem', color: '#0A0A0A', letterSpacing: '-0.01em' }}>Russki+</span>
+          <AppLogo size={26} textSize="0.88rem" />
         </button>
       </div>
 

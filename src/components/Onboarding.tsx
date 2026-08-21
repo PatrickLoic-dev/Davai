@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Globe, Film, Briefcase, Target, Zap, Flame, Trophy, Check } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
+import { AppLogo } from './Logo';
 
 interface Props { onComplete: () => void; }
 
@@ -82,10 +83,7 @@ export default function Onboarding({ onComplete }: Props) {
 
       {/* Top bar */}
       <div style={{ padding: '1.25rem clamp(1.25rem, 5vw, 2.5rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E8E8E8', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-cyrillic)', fontWeight: 900, fontSize: '1rem', color: 'white' }}>Р</div>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.95rem', color: '#0A0A0A', letterSpacing: '-0.01em' }}>Russki+</span>
-        </div>
+        <AppLogo size={30} textSize="0.95rem" />
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#A3A3A3' }}>{step + 1} / {TOTAL}</span>
       </div>
 

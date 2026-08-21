@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { ArrowRight, BookOpen, Layers, BookText, PenLine, Trophy, Zap, Volume2, ChevronRight } from 'lucide-react';
+import { BearMark } from './Logo';
 
 interface Props {
   onStart: () => void;
@@ -117,9 +118,9 @@ export default function HomePage({ onStart, onLogin }: Props) {
         borderBottom: navSolid ? '1px solid rgba(255,255,255,0.06)' : 'none',
         transition: 'background 0.3s, backdrop-filter 0.3s',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '34px', height: '34px', borderRadius: '9px', background: '#C8FF00', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: '1.15rem', color: '#08080F' }}>Р</div>
-          <span style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.04em', color: 'white' }}>RUSSKI<span style={{ color: '#C8FF00' }}>+</span></span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+          <BearMark size={34} variant="light" />
+          <span style={{ fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.04em', color: 'white' }}>DAVAI</span>
         </div>
 
         {/* Desktop links — hidden on mobile */}
@@ -342,8 +343,8 @@ export default function HomePage({ onStart, onLogin }: Props) {
       {/* ── FOOTER ── */}
       <footer style={{ padding: '2rem clamp(1.25rem, 5vw, 4rem)', background: '#08080F', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '26px', height: '26px', borderRadius: '7px', background: '#C8FF00', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sport)', fontWeight: 900, fontSize: '0.95rem', color: '#08080F' }}>Р</div>
-          <span style={{ fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: '0.88rem', color: 'rgba(255,255,255,0.3)' }}>RUSSKI+</span>
+          <BearMark size={26} variant="light" />
+          <span style={{ fontFamily: 'var(--font-sport)', fontWeight: 800, fontSize: '0.88rem', color: 'rgba(255,255,255,0.3)' }}>DAVAI</span>
         </div>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'rgba(255,255,255,0.18)', letterSpacing: '0.06em' }}>© 2026 · Open-source · MIT</span>
         <div style={{ display: 'flex', gap: '1.5rem' }}>

@@ -1,0 +1,39 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- rounded square card background -->
+  <rect x="0" y="0" width="200" height="200" rx="40" fill="#f7f0e2"/>
+
+  <!-- === bear silhouette (all same fill, overlapping circles fuse into one shape) === -->
+  <g fill="#1c1f2b">
+    <!-- ears -->
+    <circle cx="53" cy="52" r="26"/>
+    <circle cx="147" cy="52" r="26"/>
+    <circle cx="40" cy="40" r="12"/>
+    <circle cx="160" cy="40" r="12"/>
+
+    <!-- fur tufts around top/sides of head -->
+    <circle cx="150" cy="120" r="17"/>
+    <circle cx="147" cy="103" r="16"/>
+    <circle cx="138" cy="88" r="16"/>
+    <circle cx="125" cy="76" r="15"/>
+    <circle cx="108" cy="71" r="14"/>
+    <circle cx="92" cy="71" r="14"/>
+    <circle cx="75" cy="76" r="15"/>
+    <circle cx="62" cy="88" r="16"/>
+    <circle cx="53" cy="103" r="16"/>
+    <circle cx="50" cy="120" r="17"/>
+
+    <!-- base head -->
+    <circle cx="100" cy="120" r="52"/>
+  </g>
+
+  <!-- ear insides -->
+  <circle cx="55" cy="56" r="12" fill="#f7f0e2"/>
+  <circle cx="145" cy="56" r="12" fill="#f7f0e2"/>
+
+  <!-- snout -->
+  <ellipse cx="100" cy="140" rx="32" ry="24" fill="#f7f0e2"/>
+
+  <!-- nostrils -->
+  <ellipse cx="90" cy="133" rx="4.5" ry="5.5" fill="#1c1f2b"/>
+  <ellipse cx="110" cy="133" rx="4.5" ry="5.5" fill="#1c1f2b"/>
+</svg>

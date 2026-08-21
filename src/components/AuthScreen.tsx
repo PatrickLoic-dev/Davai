@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
+import { AppLogo } from './Logo';
 
 interface Props { onBack?: () => void; }
 
@@ -52,10 +53,7 @@ export default function AuthScreen({ onBack }: Props) {
 
       {/* Top bar */}
       <div style={{ padding: '1.25rem clamp(1.25rem, 5vw, 2.5rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E8E8E8', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-cyrillic)', fontWeight: 900, fontSize: '1rem', color: 'white' }}>Р</div>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.95rem', color: '#0A0A0A', letterSpacing: '-0.01em' }}>Russki+</span>
-        </div>
+        <AppLogo size={30} textSize="0.95rem" />
         {onBack && (
           <button onClick={onBack}
             style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: '1px solid #E8E8E8', color: '#737373', padding: '0.45rem 0.9rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontSize: '0.82rem', cursor: 'pointer', transition: 'border-color 0.15s' }}
