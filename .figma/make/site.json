@@ -1,0 +1,10 @@
+{
+  "description": "Engage in interactive learning of the Cyrillic alphabet, basic vocabulary, and grammar foundations while tracking progress through gamified exercises.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
