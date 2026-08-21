@@ -1,6 +1,7 @@
-import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, useRef, ReactNode } from 'react';
 import { BADGES, BadgeStats } from '../data/badges';
 import { SRSState } from '../data/vocabulary';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface UserProfile {
   name: string;
@@ -199,13 +200,17 @@ function reducer(state: UserState, action: Action): UserState {
 const UserContext = createContext<{
   state: UserState;
   dispatch: React.Dispatch<Action>;
+  signOut: () => Promise<void>;
 } | null>(null);
 
 const STORAGE_KEY = 'russki-user-v2';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const userIdRef = useRef<string | null>(null);
 
+  /* Local cache — instant on load, and the only source of truth when
+     Supabase isn't configured. */
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -222,8 +227,80 @@ export function UserProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
+  /* Supabase session → remote progress. Runs once on mount, and again
+     whenever auth state changes (login, logout, token refresh). */
+  useEffect(() => {
+    if (!supabase) return;
+    let cancelled = false;
+
+    async function syncFromSession(session: import('@supabase/supabase-js').Session | null) {
+      if (!session || !supabase) {
+        userIdRef.current = null;
+        return;
+      }
+      userIdRef.current = session.user.id;
+      const profile: UserProfile = {
+        name: (session.user.user_metadata?.name as string | undefined) ?? session.user.email!.split('@')[0],
+        email: session.user.email!,
+      };
+      const { data, error } = await supabase
+        .from('progress')
+        .select('state')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error) {
+        console.error('Failed to load progress from Supabase', error);
+      }
+      if (data?.state) {
+        dispatch({ type: 'HYDRATE', state: { ...(data.state as UserState), isAuthenticated: true, profile } });
+      } else {
+        dispatch({ type: 'LOGIN', profile });
+      }
+      dispatch({ type: 'TICK_STREAK' });
+    }
+
+    supabase.auth.getSession().then(({ data }) => syncFromSession(data.session));
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        userIdRef.current = null;
+        dispatch({ type: 'LOGOUT' });
+      } else if (event === 'SIGNED_IN' && session) {
+        syncFromSession(session);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  /* Debounced upsert of the full progress blob whenever it changes. */
+  useEffect(() => {
+    if (!supabase || !state.isAuthenticated || !userIdRef.current) return;
+    const client = supabase;
+    const uid = userIdRef.current;
+    const t = setTimeout(() => {
+      client
+        .from('progress')
+        .upsert({ user_id: uid, state })
+        .then(({ error }) => {
+          if (error) console.error('Failed to sync progress to Supabase', error);
+        });
+    }, 800);
+    return () => clearTimeout(t);
+  }, [state]);
+
+  async function signOut() {
+    if (supabase) await supabase.auth.signOut();
+    userIdRef.current = null;
+    dispatch({ type: 'LOGOUT' });
+  }
+
   return (
-    <UserContext.Provider value={{ state, dispatch }}>
+    <UserContext.Provider value={{ state, dispatch, signOut }}>
       {children}
     </UserContext.Provider>
   );
@@ -234,6 +311,8 @@ export function useUser() {
   if (!ctx) throw new Error('useUser must be used within UserProvider');
   return ctx;
 }
+
+export { isSupabaseConfigured };
 
 export function xpForNextLevel(level: number): number {
   return level * 100;

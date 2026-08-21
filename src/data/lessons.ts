@@ -386,4 +386,108 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'numbers-cardinal',
+    title: 'Les chiffres 0 à 100',
+    titleRu: 'Числа',
+    module: 'numbers',
+    order: 6,
+    xpReward: 60,
+    prerequisites: ['alphabet-intro'],
+    intro: 'Compter en russe suit une logique simple une fois les nombres de base mémorisés — les dizaines et centaines se construisent à partir d\'eux.',
+    sections: [
+      {
+        heading: '0 à 10 — les fondations',
+        body: 'Ces dix nombres sont à mémoriser en premier — tout le reste en découle.',
+        table: {
+          headers: ['Chiffre', 'Russe', 'Translit.'],
+          rows: [
+            ['0', 'ноль', 'nol\''],
+            ['1', 'один', 'adín'],
+            ['2', 'два', 'dva'],
+            ['3', 'три', 'tri'],
+            ['4', 'четыре', 'tchétyrye'],
+            ['5', 'пять', 'pyat\''],
+            ['6', 'шесть', 'chest\''],
+            ['7', 'семь', 'syem\''],
+            ['8', 'восемь', 'vósyem\''],
+            ['9', 'девять', 'dyévyat\''],
+            ['10', 'десять', 'dyésyat\''],
+          ],
+        },
+      },
+      {
+        heading: '11 à 20 — le suffixe -надцать',
+        body: 'De 11 à 19, on ajoute le suffixe -надцать ("dix de plus") à la racine du chiffre. 20 a sa propre forme.',
+        table: {
+          headers: ['Chiffre', 'Russe', 'Translit.'],
+          rows: [
+            ['11', 'одиннадцать', 'adínnatsat\''],
+            ['12', 'двенадцать', 'dvyénatsat\''],
+            ['13', 'тринадцать', 'trinátsat\''],
+            ['15', 'пятнадцать', 'pyatnátsat\''],
+            ['20', 'двадцать', 'dvátsat\''],
+          ],
+        },
+      },
+      {
+        heading: 'Les dizaines : 20 à 100',
+        body: 'Les dizaines se construisent souvent à partir du chiffre correspondant + -дцать ou -десят. Pour les nombres composés (ex. 25), on dit simplement "vingt-cinq" comme en français : двадцать пять.',
+        table: {
+          headers: ['Chiffre', 'Russe', 'Translit.'],
+          rows: [
+            ['30', 'тридцать', 'trítsat\''],
+            ['40', 'сорок', 'sórak'],
+            ['50', 'пятьдесят', 'pyat\'dyesyát'],
+            ['100', 'сто', 'sto'],
+          ],
+        },
+      },
+      {
+        heading: "La règle d'accord (aperçu)",
+        body: 'Le nombre qui précède un nom change sa terminaison ! Règle simplifiée pour le niveau A1 : "1" → nom au singulier normal ; "2, 3, 4" → nom à une forme spéciale (génitif singulier) ; "5" et plus → nom au génitif pluriel.',
+        examples: [
+          { ru: 'один стол', translit: 'adín stol', fr: '1 table (normal)' },
+          { ru: 'два стола', translit: 'dva stalá', fr: '2 tables (forme spéciale)' },
+          { ru: 'пять столов', translit: 'pyat\' stalóv', fr: '5 tables (génitif pluriel)' },
+        ],
+      },
+    ],
+    exercises: [
+      {
+        id: 'num-e1', type: 'mcq',
+        question: 'Comment dit-on "5" en russe ?',
+        options: ['четыре', 'пять', 'шесть', 'семь'],
+        correct: 1,
+        explanation: 'пять = 5.',
+      },
+      {
+        id: 'num-e2', type: 'mcq',
+        question: 'Quel suffixe transforme "6" (шесть) en "16" ?',
+        options: ['-десят', '-дцать', '-надцать', '-ста'],
+        correct: 2,
+        explanation: 'шесть + -надцать → шестнадцать (16).',
+      },
+      {
+        id: 'num-e3', type: 'fill',
+        question: 'Écrivez le chiffre "10" en russe : ___',
+        correct: 'десять',
+        hint: 'Racine "дес-"',
+      },
+      {
+        id: 'num-e4', type: 'mcq',
+        question: 'Avec "2, 3 ou 4", le nom qui suit prend :',
+        options: ['Le nominatif pluriel', 'Une forme spéciale (génitif singulier)', 'Le génitif pluriel', 'Aucun changement'],
+        correct: 1,
+        explanation: 'Règle A1 simplifiée : 2/3/4 + génitif singulier (ex. два стола).',
+      },
+      {
+        id: 'num-e5', type: 'mcq',
+        question: '"Пять столов" (5 tables) — quelle forme prend "стол" ?',
+        options: ['Nominatif singulier', 'Génitif singulier', 'Génitif pluriel', 'Accusatif'],
+        correct: 2,
+        explanation: '"5" et plus → génitif pluriel : столов.',
+      },
+    ],
+  },
 ];

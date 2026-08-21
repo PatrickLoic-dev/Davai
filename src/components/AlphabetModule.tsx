@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Volume2, VolumeX, Play, RotateCcw, ChevronRight, X, Lightbulb } from 'lucide-react';
 import { ALPHABET, ALPHABET_QUIZ_POOL, CyrillicLetter, CATEGORY_COLOR, CATEGORY_BG, CATEGORY_LABEL } from '../data/alphabet';
 import { useUser } from '../contexts/UserContext';
-import { speakRussian, isSpeechSupported, preloadVoices } from '../utils/audio';
+import { speakRussian, isSpeechSupported, preloadVoices, hasAnyVoice } from '../utils/audio';
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -24,11 +24,17 @@ interface QuizQuestion {
 
 function AudioButton({ text, rate = 0.78, size = 'md', label }: { text: string; rate?: number; size?: 'sm' | 'md'; label?: string }) {
   const [playing, setPlaying] = useState(false);
+  const [voicesReady, setVoicesReady] = useState(hasAnyVoice());
   const supported = isSpeechSupported();
+
+  useEffect(() => {
+    if (!supported || voicesReady) return;
+    preloadVoices().then(voices => setVoicesReady(voices.length > 0));
+  }, [supported, voicesReady]);
 
   function handlePlay(e: React.MouseEvent) {
     e.stopPropagation();
-    if (!supported) return;
+    if (!supported || !voicesReady) return;
     setPlaying(true);
     speakRussian(text, rate);
     setTimeout(() => setPlaying(false), Math.max(800, text.length * 200));
@@ -37,14 +43,14 @@ function AudioButton({ text, rate = 0.78, size = 'md', label }: { text: string; 
   const iconSize = size === 'sm' ? 13 : 15;
   const btnSize = size === 'sm' ? '28px' : '34px';
 
-  if (!supported) {
+  if (!supported || !voicesReady) {
     return (
       <button
         disabled
         className="rounded-full flex items-center justify-center opacity-30 cursor-not-allowed"
         style={{ width: btnSize, height: btnSize, background: 'var(--muted)' }}
-        aria-label="Audio non disponible dans ce navigateur"
-        title="Audio non disponible"
+        aria-label="Audio indisponible : aucune voix de synthèse installée sur cet appareil"
+        title="Aucune voix TTS détectée — essayez Chrome/Edge, ou installez une voix dans les paramètres de votre système"
       >
         <VolumeX size={iconSize} style={{ color: 'var(--muted-foreground)' }} />
       </button>

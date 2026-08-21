@@ -20,7 +20,7 @@ const NAV_ITEMS: { id: View; label: string; Icon: React.ElementType }[] = [
 ];
 
 function SidebarNav({ current, onChange, onHome }: NavProps) {
-  const { state, dispatch } = useUser();
+  const { state, signOut } = useUser();
   return (
     <nav
       style={{
@@ -112,7 +112,7 @@ function SidebarNav({ current, onChange, onHome }: NavProps) {
               <div style={{ fontSize: '0.66rem', color: '#A3A3A3', fontFamily: 'var(--font-mono)' }}>Niv. {state.level} · {state.xp} XP</div>
             </div>
             <button
-              onClick={() => dispatch({ type: 'LOGOUT' })}
+              onClick={() => { void signOut(); }}
               style={{ background: 'none', border: 'none', padding: '4px', cursor: 'pointer', color: '#C0C0C0', display: 'flex', alignItems: 'center', flexShrink: 0, transition: 'color 0.12s' }}
               aria-label="Se déconnecter"
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0A0A0A'}

@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Volume2, RotateCcw, ChevronRight, ThumbsDown, ThumbsUp, Zap } from 'lucide-react';
+import { Volume2, VolumeX, RotateCcw, ChevronRight, ThumbsDown, ThumbsUp, Zap } from 'lucide-react';
 import { VOCAB_THEMES, VocabCard, VocabTheme } from '../data/vocabulary';
 import { useUser } from '../contexts/UserContext';
-import { speakRussian, preloadVoices } from '../utils/audio';
+import { speakRussian, preloadVoices, hasAnyVoice } from '../utils/audio';
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -18,12 +18,35 @@ interface SessionCard {
 
 function SpeakButton({ text, size = 16 }: { text: string; size?: number }) {
   const [active, setActive] = useState(false);
+  const [voicesReady, setVoicesReady] = useState(hasAnyVoice());
+
+  useEffect(() => {
+    if (voicesReady) return;
+    preloadVoices().then(voices => setVoicesReady(voices.length > 0));
+  }, [voicesReady]);
+
   function handleClick(e: React.MouseEvent) {
     e.stopPropagation();
+    if (!voicesReady) return;
     setActive(true);
     speakRussian(text, 0.75);
     setTimeout(() => setActive(false), 1000);
   }
+
+  if (!voicesReady) {
+    return (
+      <button
+        disabled
+        className="rounded-full flex items-center justify-center opacity-30 cursor-not-allowed"
+        style={{ width: size + 18, height: size + 18, background: 'var(--secondary)', flexShrink: 0 }}
+        aria-label="Audio indisponible : aucune voix de synthèse installée sur cet appareil"
+        title="Aucune voix TTS détectée — essayez Chrome/Edge, ou installez une voix dans les paramètres de votre système"
+      >
+        <VolumeX size={size} style={{ color: 'var(--muted-foreground)' }} />
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={handleClick}

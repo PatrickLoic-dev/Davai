@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { AppLogo } from './Logo';
 
 interface Props { onBack?: () => void; }
@@ -19,25 +20,59 @@ export default function AuthScreen({ onBack }: Props) {
   const [emailFocus, setEmailFocus] = useState(false);
   const [pwdFocus, setPwdFocus]     = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     if (!email.trim() || !password.trim()) { setError('Remplissez tous les champs.'); return; }
     if (mode === 'register' && !name.trim()) { setError('Entrez votre prénom.'); return; }
     if (password.length < 6) { setError('Mot de passe trop court (6 caractères min).'); return; }
+
+    if (!isSupabaseConfigured || !supabase) {
+      // Fallback: no backend configured, keep the app usable locally.
+      setLoading(true);
+      setTimeout(() => {
+        dispatch({ type: 'LOGIN', profile: { name: name.trim() || email.split('@')[0], email: email.trim() } });
+        setLoading(false);
+      }, 700);
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      dispatch({ type: 'LOGIN', profile: { name: name.trim() || email.split('@')[0], email: email.trim() } });
+    if (mode === 'register') {
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: { data: { name: name.trim() } },
+      });
       setLoading(false);
-    }, 700);
+      if (signUpError) { setError(signUpError.message); return; }
+      // If email confirmation is required, there's no session yet — UserContext
+      // will pick it up automatically once the user confirms and signs in.
+    } else {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      setLoading(false);
+      if (signInError) { setError(signInError.message); return; }
+    }
+    // On success, UserContext's onAuthStateChange listener handles the rest.
   }
 
-  function handleGoogle() {
+  async function handleGoogle() {
+    if (!isSupabaseConfigured || !supabase) {
+      setLoading(true);
+      setTimeout(() => {
+        dispatch({ type: 'LOGIN', profile: { name: 'Apprenant', email: 'user@google.com' } });
+        setLoading(false);
+      }, 600);
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      dispatch({ type: 'LOGIN', profile: { name: 'Apprenant', email: 'user@google.com' } });
-      setLoading(false);
-    }, 600);
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+    setLoading(false);
+    if (oauthError) setError(oauthError.message);
+    // On success this redirects away and back — UserContext picks up the session on return.
   }
 
   const inputStyle = (focused: boolean): React.CSSProperties => ({
