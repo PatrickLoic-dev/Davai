@@ -85,38 +85,47 @@ export default function HomePage({ onStart, onLogin }: Props) {
   return (
     <div ref={containerRef} style={{ height: '100%', overflowY: 'auto', background: '#FAFAF8', fontFamily: 'var(--font-ui)', color: '#0A0A0A' }}>
 
-      {/* ── NAV ── */}
+      {/* ── FLOATING NAV ── */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: navSolid ? 'rgba(250,250,248,0.92)' : 'transparent',
-        backdropFilter: navSolid ? 'blur(16px)' : 'none',
-        borderBottom: navSolid ? '1px solid #EBEBEB' : 'none',
-        transition: 'background 0.3s, border-color 0.3s',
-        padding: '0 clamp(1.25rem, 5vw, 4rem)',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        height: '64px',
+        padding: 'clamp(0.75rem, 2vw, 1.1rem) clamp(1rem, 4vw, 2rem) 0.5rem',
       }}>
-        <AppLogo size={26} textSize="0.92rem" />
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '2rem' }} className="hp-links">
-          {[['method', 'Méthode'], ['modules', 'Modules'], ['path', 'Parcours']].map(([id, label]) => (
-            <button key={id} onClick={() => scrollTo(id)}
-              style={{ background: 'none', border: 'none', color: '#5A5A5A', fontFamily: 'var(--font-ui)', fontSize: '0.87rem', fontWeight: 500, cursor: 'pointer', transition: 'color 0.15s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0A0A0A'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#5A5A5A'}
-            >{label}</button>
-          ))}
-        </nav>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button onClick={onLogin}
-            style={{ background: 'none', border: '1.5px solid #D0D0D0', color: '#0A0A0A', padding: '0.45rem 1rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontSize: '0.84rem', fontWeight: 600, cursor: 'pointer', transition: 'border-color 0.15s' }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = '#0A0A0A'}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = '#D0D0D0'}
-          >Connexion</button>
-          <button onClick={onStart}
-            style={{ background: '#0A0A0A', color: 'white', border: 'none', padding: '0.45rem 1.1rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontSize: '0.84rem', fontWeight: 600, cursor: 'pointer', transition: 'opacity 0.15s' }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.82'}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
-          >Commencer</button>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem',
+            height: '58px', borderRadius: '9999px',
+            background: 'rgba(255,255,255,0.72)',
+            backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
+            border: '1px solid rgba(10,10,10,0.08)',
+            boxShadow: navSolid
+              ? '0 8px 28px rgba(10,10,10,0.10), 0 1px 2px rgba(10,10,10,0.04)'
+              : '0 2px 10px rgba(10,10,10,0.05)',
+            transition: 'box-shadow 0.3s ease',
+            padding: '0 8px 0 18px',
+          }}>
+            <AppLogo size={24} textSize="0.9rem" />
+            <nav style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }} className="hp-links">
+              {[['method', 'Méthode'], ['modules', 'Modules'], ['path', 'Parcours']].map(([id, label]) => (
+                <button key={id} onClick={() => scrollTo(id)}
+                  style={{ background: 'none', border: 'none', color: '#5A5A5A', fontFamily: 'var(--font-ui)', fontSize: '0.87rem', fontWeight: 500, cursor: 'pointer', transition: 'color 0.15s' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0A0A0A'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#5A5A5A'}
+                >{label}</button>
+              ))}
+            </nav>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button onClick={onLogin}
+                style={{ background: 'none', border: '1.5px solid #D0D0D0', color: '#0A0A0A', padding: '0.4rem 0.95rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontSize: '0.83rem', fontWeight: 600, cursor: 'pointer', transition: 'border-color 0.15s' }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = '#0A0A0A'}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = '#D0D0D0'}
+              >Connexion</button>
+              <button onClick={onStart}
+                style={{ background: '#0A0A0A', color: 'white', border: 'none', padding: '0.4rem 1.05rem', borderRadius: '100px', fontFamily: 'var(--font-ui)', fontSize: '0.83rem', fontWeight: 600, cursor: 'pointer', transition: 'opacity 0.15s' }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.82'}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+              >Commencer</button>
+            </div>
+          </div>
         </div>
       </header>
 

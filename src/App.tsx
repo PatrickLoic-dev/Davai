@@ -14,8 +14,6 @@ import Settings from './components/Settings';
 
 type Screen = 'home' | 'auth' | 'onboarding' | 'app';
 
-const ONBOARDING_KEY = 'russki-onboarding-v1';
-
 function BadgeToast({ badgeId, onDismiss }: { badgeId: string; onDismiss: () => void }) {
   const badge = BADGES.find(b => b.id === badgeId);
   useEffect(() => {
@@ -53,8 +51,7 @@ function AppShell() {
   /* Route based on auth state — runs whenever isAuthenticated changes */
   useEffect(() => {
     if (state.isAuthenticated) {
-      const done = localStorage.getItem(ONBOARDING_KEY) === '1';
-      if (!done) {
+      if (!state.onboardingComplete) {
         setScreen('onboarding');
       } else if (screen !== 'app') {
         setScreen('app');
@@ -63,10 +60,10 @@ function AppShell() {
       setScreen('home');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.isAuthenticated]);
+  }, [state.isAuthenticated, state.onboardingComplete]);
 
   function handleOnboardingComplete() {
-    localStorage.setItem(ONBOARDING_KEY, '1');
+    dispatch({ type: 'COMPLETE_ONBOARDING' });
     setScreen('app');
   }
 

@@ -24,6 +24,7 @@ export interface UserState {
   interfaceLang: 'fr' | 'en';
   notificationsEnabled: boolean;
   newBadge: string | null;
+  onboardingComplete: boolean;
 }
 
 type Action =
@@ -37,6 +38,7 @@ type Action =
   | { type: 'CLEAR_NEW_BADGE' }
   | { type: 'SET_NOTIFICATIONS'; enabled: boolean }
   | { type: 'TICK_STREAK' }
+  | { type: 'COMPLETE_ONBOARDING' }
   | { type: 'HYDRATE'; state: UserState };
 
 function xpToLevel(xp: number): number {
@@ -66,6 +68,7 @@ const INITIAL_STATE: UserState = {
   interfaceLang: 'fr',
   notificationsEnabled: true,
   newBadge: null,
+  onboardingComplete: false,
 };
 
 function buildBadgeStats(state: UserState): BadgeStats {
@@ -179,6 +182,9 @@ function reducer(state: UserState, action: Action): UserState {
     case 'SET_NOTIFICATIONS':
       return { ...state, notificationsEnabled: action.enabled };
 
+    case 'COMPLETE_ONBOARDING':
+      return { ...state, onboardingComplete: true };
+
     case 'TICK_STREAK': {
       const today = todayISO();
       if (state.lastActiveDate === today) return state;
@@ -204,6 +210,8 @@ const UserContext = createContext<{
 } | null>(null);
 
 const STORAGE_KEY = 'russki-user-v2';
+/** Legacy global flag, superseded by the per-user `onboardingComplete` field. */
+const LEGACY_ONBOARDING_KEY = 'russki-onboarding-v1';
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -216,8 +224,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const saved = JSON.parse(raw) as UserState;
+        // One-time migration from the old global (non-account-scoped) flag.
+        if (saved.onboardingComplete === undefined && localStorage.getItem(LEGACY_ONBOARDING_KEY) === '1') {
+          saved.onboardingComplete = true;
+        }
         dispatch({ type: 'HYDRATE', state: saved });
       }
+      localStorage.removeItem(LEGACY_ONBOARDING_KEY);
     } catch {
       // ignore corrupt storage
     }
