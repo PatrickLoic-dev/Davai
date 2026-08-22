@@ -4,11 +4,11 @@ import { useUser } from '../contexts/UserContext';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { AppLogo } from './Logo';
 
-interface Props { onBack?: () => void; }
+interface Props { onBack?: () => void; initialMode?: 'login' | 'register'; }
 
-export default function AuthScreen({ onBack }: Props) {
+export default function AuthScreen({ onBack, initialMode = 'register' }: Props) {
   const { dispatch } = useUser();
-  const [mode, setMode]       = useState<'login' | 'register'>('register');
+  const [mode, setMode]       = useState<'login' | 'register'>(initialMode);
   const [name, setName]       = useState('');
   const [email, setEmail]     = useState('');
   const [password, setPassword] = useState('');

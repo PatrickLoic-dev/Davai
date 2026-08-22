@@ -11,6 +11,8 @@ import FlashcardModule from './components/FlashcardModule';
 import GrammarModule from './components/GrammarModule';
 import ExerciseModule from './components/ExerciseModule';
 import Settings from './components/Settings';
+import Changelog from './pages/Changelog';
+import Terms from './pages/Terms';
 
 type Screen = 'home' | 'auth' | 'onboarding' | 'app';
 
@@ -47,6 +49,7 @@ function AppShell() {
   const { state, dispatch } = useUser();
   const [screen, setScreen] = useState<Screen>('home');
   const [view, setView]     = useState<View>('path');
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
 
   /* Route based on auth state — runs whenever isAuthenticated changes */
   useEffect(() => {
@@ -67,12 +70,22 @@ function AppShell() {
     setScreen('app');
   }
 
+  /* ── Standalone, deep-linkable pages (independent of auth state) ── */
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (path === '/changelog') return <Changelog />;
+  if (path === '/conditions-generales') return <Terms />;
+
   /* ── Public screens ── */
   if (screen === 'home')
-    return <HomePage onStart={() => setScreen('auth')} onLogin={() => setScreen('auth')} />;
+    return (
+      <HomePage
+        onStart={() => { setAuthMode('register'); setScreen('auth'); }}
+        onLogin={() => { setAuthMode('login'); setScreen('auth'); }}
+      />
+    );
 
   if (screen === 'auth')
-    return <AuthScreen onBack={() => setScreen('home')} />;
+    return <AuthScreen initialMode={authMode} onBack={() => setScreen('home')} />;
 
   if (screen === 'onboarding')
     return <Onboarding onComplete={handleOnboardingComplete} />;

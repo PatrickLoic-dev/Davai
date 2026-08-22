@@ -280,7 +280,7 @@ export default function HomePage({ onStart, onLogin }: Props) {
       <footer style={{ borderTop: '1px solid #EBEBEB', padding: '1.75rem clamp(1.25rem, 6vw, 4rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', background: 'white' }}>
         <AppLogo size={22} textSize="0.82rem" />
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: '#B0B0B0', letterSpacing: '0.06em' }}>© 2026 · Open-source · MIT</span>
-        <div style={{ display: 'flex', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
           {[['method', 'Méthode'], ['modules', 'Modules'], ['path', 'Parcours']].map(([id, label]) => (
             <button key={id} onClick={() => scrollTo(id)}
               style={{ background: 'none', border: 'none', color: '#8A8A8A', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--font-ui)', transition: 'color 0.15s' }}
@@ -288,6 +288,16 @@ export default function HomePage({ onStart, onLogin }: Props) {
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#8A8A8A'}
             >{label}</button>
           ))}
+          <a href="/changelog"
+            style={{ color: '#8A8A8A', fontSize: '0.8rem', textDecoration: 'none', fontFamily: 'var(--font-ui)', transition: 'color 0.15s' }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0A0A0A'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#8A8A8A'}
+          >Changelog</a>
+          <a href="/conditions-generales"
+            style={{ color: '#8A8A8A', fontSize: '0.8rem', textDecoration: 'none', fontFamily: 'var(--font-ui)', transition: 'color 0.15s' }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0A0A0A'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#8A8A8A'}
+          >CGU</a>
         </div>
       </footer>
 
