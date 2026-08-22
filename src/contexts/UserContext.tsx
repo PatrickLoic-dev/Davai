@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useRef, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, useRef, useState, ReactNode } from 'react';
 import { BADGES, BadgeStats } from '../data/badges';
 import { SRSState } from '../data/vocabulary';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
@@ -207,6 +207,9 @@ const UserContext = createContext<{
   state: UserState;
   dispatch: React.Dispatch<Action>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
+  passwordRecovery: boolean;
+  clearPasswordRecovery: () => void;
 } | null>(null);
 
 const STORAGE_KEY = 'russki-user-v2';
@@ -216,6 +219,7 @@ const LEGACY_ONBOARDING_KEY = 'russki-onboarding-v1';
 export function UserProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const userIdRef = useRef<string | null>(null);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
 
   /* Local cache — instant on load, and the only source of truth when
      Supabase isn't configured. */
@@ -282,6 +286,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'LOGOUT' });
       } else if (event === 'SIGNED_IN' && session) {
         syncFromSession(session);
+      } else if (event === 'PASSWORD_RECOVERY') {
+        setPasswordRecovery(true);
       }
     });
 
@@ -313,8 +319,23 @@ export function UserProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'LOGOUT' });
   }
 
+  /**
+   * Erases this user's stored progress. The anon key used by the client
+   * can't remove the auth.users row itself (that needs a service-role key
+   * on a server) — full account deletion requires contacting the maintainer
+   * until a proper backend endpoint exists.
+   */
+  async function deleteAccount() {
+    if (supabase && userIdRef.current) {
+      const { error } = await supabase.from('progress').delete().eq('user_id', userIdRef.current);
+      if (error) console.error('Failed to delete progress', error);
+    }
+    localStorage.removeItem(STORAGE_KEY);
+    await signOut();
+  }
+
   return (
-    <UserContext.Provider value={{ state, dispatch, signOut }}>
+    <UserContext.Provider value={{ state, dispatch, signOut, deleteAccount, passwordRecovery, clearPasswordRecovery: () => setPasswordRecovery(false) }}>
       {children}
     </UserContext.Provider>
   );

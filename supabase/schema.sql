@@ -28,6 +28,10 @@ create policy "Users update own progress"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+create policy "Users delete own progress"
+  on public.progress for delete
+  using (auth.uid() = user_id);
+
 -- Keep updated_at fresh on every upsert.
 create or replace function public.set_progress_updated_at()
 returns trigger as $$

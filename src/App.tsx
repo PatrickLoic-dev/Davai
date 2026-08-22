@@ -48,7 +48,7 @@ function BadgeToast({ badgeId, onDismiss }: { badgeId: string; onDismiss: () => 
 }
 
 function AppShell() {
-  const { state, dispatch } = useUser();
+  const { state, dispatch, passwordRecovery, clearPasswordRecovery } = useUser();
   const [screen, setScreen] = useState<Screen>('home');
   const [view, setView]     = useState<View>('path');
   const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
@@ -77,6 +77,9 @@ function AppShell() {
   if (path === '/changelog') return <Changelog />;
   if (path === '/conditions-generales') return <Terms />;
   if (path === '/politique-de-confidentialite') return <Privacy />;
+
+  /* ── Password recovery: takes over regardless of current screen ── */
+  if (passwordRecovery) return <AuthScreen forceReset onResetDone={clearPasswordRecovery} />;
 
   /* ── Public screens ── */
   if (screen === 'home')

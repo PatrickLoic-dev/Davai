@@ -1,10 +1,18 @@
+import { useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { BADGES } from '../data/badges';
 import { Flame, BookOpen, Layers, Award, Star, Bell } from 'lucide-react';
 
 export default function Settings() {
-  const { state, dispatch } = useUser();
+  const { state, dispatch, signOut, deleteAccount } = useUser();
   const learnedCards = Object.values(state.srsState).filter(s => s === 'learned').length;
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    setDeleting(true);
+    await deleteAccount();
+  }
 
   const STATS = [
     { label: 'XP total',     value: state.xp,                       color: '#D97706', Icon: Star },
@@ -129,17 +137,61 @@ export default function Settings() {
           </div>
         </section>
 
-        {/* Danger zone */}
-        <section aria-labelledby="session-h" style={{ paddingBottom: '1rem' }}>
-          <SectionLabel id="session-h" danger>Session</SectionLabel>
+        {/* Session */}
+        <section aria-labelledby="session-h">
+          <SectionLabel id="session-h">Session</SectionLabel>
           <button
-            onClick={() => dispatch({ type: 'LOGOUT' })}
-            style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid rgba(220,38,38,0.25)', background: '#FEF2F2', color: 'var(--danger)', fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', transition: 'opacity 0.15s' }}
+            onClick={() => { void signOut(); }}
+            style={{ width: '100%', padding: '0.85rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'white', color: 'var(--foreground)', fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', transition: 'opacity 0.15s' }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.75'}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
           >
             Se déconnecter
           </button>
+        </section>
+
+        {/* Danger zone */}
+        <section aria-labelledby="danger-h" style={{ paddingBottom: '1rem' }}>
+          <SectionLabel id="danger-h" danger>Zone dangereuse</SectionLabel>
+          <div style={{ background: '#FEF2F2', border: '1px solid rgba(220,38,38,0.2)', borderRadius: '16px', padding: '1.1rem 1.25rem' }}>
+            {!confirmingDelete ? (
+              <>
+                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--danger)', marginBottom: '2px' }}>Supprimer mon compte</div>
+                <p style={{ fontSize: '0.8rem', color: '#991B1B', margin: '0 0 0.9rem', lineHeight: 1.5 }}>
+                  Efface immédiatement toute votre progression (XP, streak, leçons, badges, cartes). Pour
+                  supprimer aussi votre adresse email de nos systèmes d'authentification, contactez-nous
+                  via <a href="https://github.com/PatrickLoic-dev/Davai/issues" style={{ color: '#991B1B' }}>GitHub</a> après cette étape.
+                </p>
+                <button
+                  onClick={() => setConfirmingDelete(true)}
+                  style={{ padding: '0.6rem 1.1rem', borderRadius: '10px', border: '1px solid rgba(220,38,38,0.35)', background: 'white', color: 'var(--danger)', fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                >
+                  Supprimer mon compte
+                </button>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: '0.85rem', color: '#991B1B', fontWeight: 600, margin: '0 0 0.9rem' }}>
+                  Confirmer la suppression définitive de votre progression ?
+                </p>
+                <div style={{ display: 'flex', gap: '0.6rem' }}>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    style={{ padding: '0.6rem 1.1rem', borderRadius: '10px', border: 'none', background: 'var(--danger)', color: 'white', fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: '0.85rem', cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.6 : 1 }}
+                  >
+                    {deleting ? 'Suppression...' : 'Oui, supprimer'}
+                  </button>
+                  <button
+                    onClick={() => setConfirmingDelete(false)}
+                    style={{ padding: '0.6rem 1.1rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'white', color: 'var(--foreground)', fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </section>
 
       </div>
