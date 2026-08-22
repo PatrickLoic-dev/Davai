@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { LESSONS, Exercise, MCQExercise, FillExercise } from '../data/lessons';
 import { useUser } from '../contexts/UserContext';
+import MatchExercisePlayer from './MatchExercisePlayer';
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -19,6 +20,7 @@ export default function ExerciseModule() {
   const [answered, setAnswered] = useState<number | null>(null);
   const [fillValue, setFillValue] = useState('');
   const [fillSubmitted, setFillSubmitted] = useState(false);
+  const [matchResult, setMatchResult] = useState<boolean | null>(null);
   const [score, setScore] = useState(0);
 
   const exercises = useMemo<ExerciseSet[]>(() => [
@@ -35,6 +37,7 @@ export default function ExerciseModule() {
     setAnswered(null);
     setFillValue('');
     setFillSubmitted(false);
+    setMatchResult(null);
     setScore(0);
     setMode('session');
   }
@@ -57,6 +60,11 @@ export default function ExerciseModule() {
     if (correct) { setScore(s => s + 1); dispatch({ type: 'ADD_XP', amount: 10 }); }
   }
 
+  function handleMatch(correct: boolean) {
+    setMatchResult(correct);
+    if (correct) { setScore(s => s + 1); dispatch({ type: 'ADD_XP', amount: 10 }); }
+  }
+
   function next() {
     if (!selectedSet) return;
     if (qIdx + 1 >= selectedSet.exercises.length) {
@@ -66,6 +74,7 @@ export default function ExerciseModule() {
       setAnswered(null);
       setFillValue('');
       setFillSubmitted(false);
+      setMatchResult(null);
     }
   }
 
@@ -85,6 +94,7 @@ export default function ExerciseModule() {
           {exercises.map((set, i) => {
             const mcqCount = set.exercises.filter(e => e.type === 'mcq').length;
             const fillCount = set.exercises.filter(e => e.type === 'fill').length;
+            const matchCount = set.exercises.filter(e => e.type === 'match').length;
             const isFirst = i === 0;
             return (
               <button
@@ -112,7 +122,7 @@ export default function ExerciseModule() {
                 <div className="flex-1 min-w-0">
                   <div className="font-bold" style={{ color: 'var(--foreground)' }}>{set.lessonTitle}</div>
                   <div className="text-xs mt-0.5" style={{ color: 'var(--muted-foreground)', fontFamily: 'var(--font-mono)' }}>
-                    {set.exercises.length} questions · {mcqCount} QCM · {fillCount} texte à trous
+                    {set.exercises.length} questions · {mcqCount} QCM · {fillCount} texte à trous{matchCount > 0 ? ` · ${matchCount} association` : ''}
                   </div>
                 </div>
                 <span style={{ color: 'var(--muted-foreground)' }} aria-hidden="true">→</span>
@@ -176,10 +186,18 @@ export default function ExerciseModule() {
         <div className="flex-1 flex flex-col items-center justify-center gap-8 max-w-lg mx-auto w-full">
           <div className="w-full rounded-2xl p-6 space-y-2" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
             <div className="text-xs font-semibold" style={{ color: 'var(--gold)', fontFamily: 'var(--font-mono)' }}>
-              {q.type === 'mcq' ? 'QCM' : 'Texte à trous'}
+              {q.type === 'mcq' ? 'QCM' : q.type === 'fill' ? 'Texte à trous' : 'Association'}
             </div>
-            <p className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>{q.question}</p>
+            {q.type !== 'match' && (
+              <p className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>{q.question}</p>
+            )}
           </div>
+
+          {q.type === 'match' && (
+            <div className="w-full">
+              <MatchExercisePlayer key={q.id} exercise={q} onDone={handleMatch} />
+            </div>
+          )}
 
           {q.type === 'mcq' && (
             <div className="w-full space-y-2">
@@ -249,7 +267,7 @@ export default function ExerciseModule() {
             </form>
           )}
 
-          {((q.type === 'mcq' && answered !== null) || (q.type === 'fill' && fillSubmitted)) && (
+          {((q.type === 'mcq' && answered !== null) || (q.type === 'fill' && fillSubmitted) || (q.type === 'match' && matchResult !== null)) && (
             <div className="w-full space-y-3 animate-slide-up">
               {q.explanation && (
                 <div className="px-4 py-3 rounded-xl text-sm" style={{ background: 'rgba(124,58,237,0.1)', color: 'var(--secondary-foreground)' }}>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LESSONS, Lesson } from '../data/lessons';
 import { useUser } from '../contexts/UserContext';
+import MatchExercisePlayer from './MatchExercisePlayer';
 
 const GRAMMAR_LESSONS = LESSONS.filter(l => l.module === 'grammar');
 const ALL_LESSONS = LESSONS;
@@ -268,6 +269,7 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
   const [answered, setAnswered] = useState<number | null>(null);
   const [fillValue, setFillValue] = useState('');
   const [fillSubmitted, setFillSubmitted] = useState(false);
+  const [matchResult, setMatchResult] = useState<boolean | null>(null);
   const [score, setScore] = useState(0);
   const [done, setDone] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
@@ -282,6 +284,11 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
     setAnswered(idx);
     if (correct) { setScore(s => s + 1); dispatch({ type: 'ADD_XP', amount: 10 }); }
     else setShakeKey(k => k + 1);
+  }
+
+  function handleMatch(correct: boolean) {
+    setMatchResult(correct);
+    if (correct) { setScore(s => s + 1); dispatch({ type: 'ADD_XP', amount: 10 }); }
   }
 
   function handleFill(e: React.FormEvent) {
@@ -303,6 +310,7 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
       setAnswered(null);
       setFillValue('');
       setFillSubmitted(false);
+      setMatchResult(null);
     }
   }
 
@@ -343,10 +351,18 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
       <div className="flex-1 flex flex-col items-center justify-center gap-8 max-w-lg mx-auto w-full">
         <div className="w-full rounded-2xl p-6 space-y-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
           <div className="text-xs font-semibold" style={{ color: 'var(--violet)', fontFamily: 'var(--font-mono)' }}>
-            {q.type === 'mcq' ? 'QCM' : 'Texte à trous'}
+            {q.type === 'mcq' ? 'QCM' : q.type === 'fill' ? 'Texte à trous' : 'Association'}
           </div>
-          <p className="text-lg font-semibold leading-snug" style={{ color: 'var(--foreground)' }}>{q.question}</p>
+          {q.type !== 'match' && (
+            <p className="text-lg font-semibold leading-snug" style={{ color: 'var(--foreground)' }}>{q.question}</p>
+          )}
         </div>
+
+        {q.type === 'match' && (
+          <div className="w-full">
+            <MatchExercisePlayer key={q.id} exercise={q} onDone={handleMatch} />
+          </div>
+        )}
 
         {q.type === 'mcq' && (
           <div className="w-full space-y-2">
@@ -421,7 +437,7 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
           </form>
         )}
 
-        {((q.type === 'mcq' && answered !== null) || (q.type === 'fill' && fillSubmitted)) && (
+        {((q.type === 'mcq' && answered !== null) || (q.type === 'fill' && fillSubmitted) || (q.type === 'match' && matchResult !== null)) && (
           <div className="w-full space-y-3 animate-slide-up">
             {q.explanation && (
               <div className="px-4 py-3 rounded-xl text-sm" style={{ background: 'rgba(124,58,237,0.1)', color: 'var(--secondary-foreground)' }}>

@@ -18,7 +18,15 @@ export interface FillExercise {
   explanation?: string;
 }
 
-export type Exercise = MCQExercise | FillExercise;
+export interface MatchExercise {
+  id: string;
+  type: 'match';
+  question: string; // instructions shown above the two columns
+  pairs: { left: string; right: string }[]; // left/right strings must be unique within the exercise
+  explanation?: string;
+}
+
+export type Exercise = MCQExercise | FillExercise | MatchExercise;
 
 export interface LessonSection {
   heading: string;
@@ -109,6 +117,18 @@ export const LESSONS: Lesson[] = [
         options: ['26', '30', '33', '36'],
         correct: 2,
         explanation: 'L\'alphabet russe compte 33 lettres.',
+      },
+      {
+        id: 'al-e6', type: 'match',
+        question: 'Associez chaque lettre à sa prononciation.',
+        pairs: [
+          { left: 'В', right: 'V' },
+          { left: 'Н', right: 'N' },
+          { left: 'Р', right: 'R (roulé)' },
+          { left: 'С', right: 'S' },
+          { left: 'У', right: 'OU' },
+        ],
+        explanation: 'Ces cinq lettres sont les faux amis classiques de l\'alphabet cyrillique.',
       },
     ],
   },
@@ -251,6 +271,18 @@ export const LESSONS: Lesson[] = [
         question: '"море" (mer) se termine par -е donc son genre est ___',
         correct: 'neutre',
         hint: '-о/-е = ?',
+      },
+      {
+        id: 'gr-e6', type: 'match',
+        question: 'Associez chaque nom russe à sa traduction.',
+        pairs: [
+          { left: 'стол', right: 'table' },
+          { left: 'мама', right: 'maman' },
+          { left: 'окно', right: 'fenêtre' },
+          { left: 'земля', right: 'terre' },
+          { left: 'дом', right: 'maison' },
+        ],
+        explanation: 'стол/дом sont masculins, мама/земля féminins, окно neutre — la terminaison donne le genre.',
       },
     ],
   },
@@ -487,6 +519,17 @@ export const LESSONS: Lesson[] = [
         options: ['Nominatif singulier', 'Génitif singulier', 'Génitif pluriel', 'Accusatif'],
         correct: 2,
         explanation: '"5" et plus → génitif pluriel : столов.',
+      },
+      {
+        id: 'num-e6', type: 'match',
+        question: 'Associez chaque chiffre à son écriture en russe.',
+        pairs: [
+          { left: '1', right: 'один' },
+          { left: '5', right: 'пять' },
+          { left: '10', right: 'десять' },
+          { left: '20', right: 'двадцать' },
+          { left: '100', right: 'сто' },
+        ],
       },
     ],
   },

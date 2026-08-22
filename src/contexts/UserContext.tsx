@@ -28,7 +28,7 @@ export interface UserState {
   streakIgnited: boolean;
 }
 
-type Action =
+export type Action =
   | { type: 'LOGIN'; profile: UserProfile }
   | { type: 'LOGOUT' }
   | { type: 'ADD_XP'; amount: number }
@@ -115,7 +115,9 @@ function checkNewBadges(state: UserState): string | null {
   return null;
 }
 
-function reducer(state: UserState, action: Action): UserState {
+export const INITIAL_USER_STATE = INITIAL_STATE;
+
+export function userReducer(state: UserState, action: Action): UserState {
   switch (action.type) {
     case 'HYDRATE':
       return { ...INITIAL_STATE, ...action.state, newBadge: null, streakIgnited: false };
@@ -217,7 +219,7 @@ const STORAGE_KEY = 'russki-user-v2';
 const LEGACY_ONBOARDING_KEY = 'russki-onboarding-v1';
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [state, dispatch] = useReducer(userReducer, INITIAL_STATE);
   const userIdRef = useRef<string | null>(null);
   const [passwordRecovery, setPasswordRecovery] = useState(false);
 

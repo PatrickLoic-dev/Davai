@@ -95,6 +95,7 @@ L'app est accessible sur `http://localhost:8443`.
 npm run build     # build de production
 npm run preview   # prévisualiser le build
 npm run format    # formater le code avec oxfmt
+npm test          # tests unitaires (Vitest)
 ```
 
 ## Structure du projet
@@ -131,9 +132,10 @@ Les contributions sont les bienvenues, qu'il s'agisse de code, de contenu pédag
 2. Crée une branche descriptive : `git checkout -b feature/vocab-animaux` ou `fix/quiz-score`
 3. Installe les dépendances et lance le serveur de dev (voir [Démarrer en local](#démarrer-en-local))
 4. Fais tes changements en respectant le style existant (TypeScript strict, composants fonctionnels, styles inline cohérents avec les variables CSS de `src/index.css`)
-5. Vérifie que le typecheck passe :
+5. Vérifie que le typecheck et les tests passent :
    ```bash
    npx tsc --noEmit
+   npm test
    ```
 6. Commit avec un message clair, push, puis ouvre une **Pull Request** avec une description du changement (et une capture d'écran si c'est visuel)
 
