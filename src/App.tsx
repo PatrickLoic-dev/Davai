@@ -13,6 +13,7 @@ import ExerciseModule from './components/ExerciseModule';
 import Settings from './components/Settings';
 import Changelog from './pages/Changelog';
 import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 
 type Screen = 'home' | 'auth' | 'onboarding' | 'app';
 
@@ -74,6 +75,7 @@ function AppShell() {
   const path = window.location.pathname.replace(/\/+$/, '') || '/';
   if (path === '/changelog') return <Changelog />;
   if (path === '/conditions-generales') return <Terms />;
+  if (path === '/politique-de-confidentialite') return <Privacy />;
 
   /* ── Public screens ── */
   if (screen === 'home')
