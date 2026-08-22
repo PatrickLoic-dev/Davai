@@ -38,7 +38,6 @@ type Action =
   | { type: 'UNLOCK_BADGE'; badgeId: string }
   | { type: 'CLEAR_NEW_BADGE' }
   | { type: 'SET_NOTIFICATIONS'; enabled: boolean }
-  | { type: 'TICK_STREAK' }
   | { type: 'COMPLETE_ONBOARDING' }
   | { type: 'CLEAR_STREAK_IGNITED' }
   | { type: 'HYDRATE'; state: UserState };
@@ -53,6 +52,26 @@ function todayISO(): string {
 
 function addActiveDate(dates: string[], date: string): string[] {
   return dates.includes(date) ? dates : [...dates, date];
+}
+
+/**
+ * The streak (and the calendar that visualizes it) only advances from real
+ * learning activity — completing a lesson or reviewing a flashcard — never
+ * from merely opening the app or logging in.
+ */
+function bumpStreak(state: UserState): Pick<UserState, 'streak' | 'lastActiveDate' | 'activeDates' | 'streakIgnited'> {
+  const today = todayISO();
+  if (state.lastActiveDate === today) {
+    return { streak: state.streak, lastActiveDate: state.lastActiveDate, activeDates: state.activeDates, streakIgnited: state.streakIgnited };
+  }
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  const newStreak = state.lastActiveDate === yesterday ? state.streak + 1 : 1;
+  return {
+    streak: newStreak,
+    lastActiveDate: today,
+    activeDates: addActiveDate(state.activeDates, today),
+    streakIgnited: newStreak === 1 && state.streak !== 1 ? true : state.streakIgnited,
+  };
 }
 
 const INITIAL_STATE: UserState = {
@@ -101,34 +120,22 @@ function reducer(state: UserState, action: Action): UserState {
     case 'HYDRATE':
       return { ...INITIAL_STATE, ...action.state, newBadge: null, streakIgnited: false };
 
-    case 'LOGIN': {
-      const today = todayISO();
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-      const streakContinues = state.lastActiveDate === today || state.lastActiveDate === yesterday;
-      const newStreak = state.lastActiveDate === today ? state.streak : streakContinues ? state.streak + 1 : 1;
+    case 'LOGIN':
       return {
         ...state,
         isAuthenticated: true,
         profile: action.profile,
-        streak: newStreak,
-        lastActiveDate: today,
-        activeDates: addActiveDate(state.activeDates, today),
-        streakIgnited: newStreak === 1 && state.streak !== 1 ? true : state.streakIgnited,
       };
-    }
 
     case 'LOGOUT':
       return { ...INITIAL_STATE };
 
     case 'ADD_XP': {
-      const today = todayISO();
       const newXP = state.xp + action.amount;
       const updated: UserState = {
         ...state,
         xp: newXP,
         level: xpToLevel(newXP),
-        lastActiveDate: today,
-        activeDates: addActiveDate(state.activeDates, today),
       };
       const newBadge = checkNewBadges(updated);
       return {
@@ -140,11 +147,10 @@ function reducer(state: UserState, action: Action): UserState {
 
     case 'COMPLETE_LESSON': {
       if (state.completedLessons.includes(action.lessonId)) return state;
-      const today = todayISO();
       const updated: UserState = {
         ...state,
+        ...bumpStreak(state),
         completedLessons: [...state.completedLessons, action.lessonId],
-        activeDates: addActiveDate(state.activeDates, today),
       };
       const newBadge = checkNewBadges(updated);
       return {
@@ -162,8 +168,8 @@ function reducer(state: UserState, action: Action): UserState {
       else if (action.rating === 'hard') next = current === 'learned' ? 'learning' : 'new';
       const updated: UserState = {
         ...state,
+        ...bumpStreak(state),
         srsState: { ...state.srsState, [action.cardId]: next },
-        activeDates: addActiveDate(state.activeDates, todayISO()),
       };
       const newBadge = checkNewBadges(updated);
       return {
@@ -191,20 +197,6 @@ function reducer(state: UserState, action: Action): UserState {
 
     case 'CLEAR_STREAK_IGNITED':
       return { ...state, streakIgnited: false };
-
-    case 'TICK_STREAK': {
-      const today = todayISO();
-      if (state.lastActiveDate === today) return state;
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-      const newStreak = state.lastActiveDate === yesterday ? state.streak + 1 : 1;
-      return {
-        ...state,
-        streak: newStreak,
-        lastActiveDate: today,
-        activeDates: addActiveDate(state.activeDates, today),
-        streakIgnited: newStreak === 1 && state.streak !== 1 ? true : state.streakIgnited,
-      };
-    }
 
     default:
       return state;
@@ -280,7 +272,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
       } else {
         dispatch({ type: 'LOGIN', profile });
       }
-      dispatch({ type: 'TICK_STREAK' });
     }
 
     supabase.auth.getSession().then(({ data }) => syncFromSession(data.session));
