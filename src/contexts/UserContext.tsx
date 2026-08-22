@@ -252,9 +252,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         return;
       }
       userIdRef.current = session.user.id;
+      const meta = session.user.user_metadata ?? {};
       const profile: UserProfile = {
-        name: (session.user.user_metadata?.name as string | undefined) ?? session.user.email!.split('@')[0],
+        name: (meta.name as string | undefined) ?? session.user.email!.split('@')[0],
         email: session.user.email!,
+        avatar: (meta.avatar_url as string | undefined) ?? (meta.picture as string | undefined),
       };
       const { data, error } = await supabase
         .from('progress')

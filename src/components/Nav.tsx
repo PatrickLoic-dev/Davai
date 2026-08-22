@@ -103,10 +103,25 @@ function SidebarNav({ current, onChange, onHome }: NavProps) {
 
         {state.profile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.52rem 0.7rem', borderRadius: '8px', background: '#F7F7F7', marginTop: '2px' }}>
-            {/* Avatar: just the initial letter, no box */}
-            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0A0A0A', flexShrink: 0, width: '18px', textAlign: 'center' }} aria-hidden="true">
-              {state.profile.name.charAt(0).toUpperCase()}
-            </span>
+            {state.profile.avatar ? (
+              <img
+                src={state.profile.avatar}
+                alt=""
+                referrerPolicy="no-referrer"
+                style={{ width: '26px', height: '26px', borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}
+              />
+            ) : (
+              <span
+                style={{
+                  width: '26px', height: '26px', borderRadius: '50%', flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: '#0A0A0A', color: 'white', fontSize: '0.78rem', fontWeight: 700,
+                }}
+                aria-hidden="true"
+              >
+                {state.profile.name.charAt(0).toUpperCase()}
+              </span>
+            )}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: '0.76rem', fontWeight: 600, color: '#0A0A0A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{state.profile.name}</div>
               <div style={{ fontSize: '0.66rem', color: '#A3A3A3', fontFamily: 'var(--font-mono)' }}>Niv. {state.level} · {state.xp} XP</div>
