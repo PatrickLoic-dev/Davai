@@ -23,8 +23,24 @@ export function speakRussian(text: string, rate = 0.78): void {
   const voice = getRussianVoice();
   if (voice) utterance.voice = voice;
 
+  utterance.onerror = e => {
+    // "interrupted"/"canceled" fire routinely when a new word is spoken
+    // before the previous one finished — not a real failure.
+    if (e.error !== 'interrupted' && e.error !== 'canceled') {
+      console.error('speechSynthesis error:', e.error);
+    }
+  };
+
   currentUtterance = utterance;
-  window.speechSynthesis.speak(utterance);
+
+  // Chromium has a well-known bug where speak() called right after cancel()
+  // (or as the very first call in a session) is silently dropped. A short
+  // delay works around it reliably.
+  setTimeout(() => {
+    window.speechSynthesis.speak(utterance);
+    // Some Chromium builds start a new utterance in a paused state.
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+  }, 40);
 }
 
 export function stopSpeech(): void {
