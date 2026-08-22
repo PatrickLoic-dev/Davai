@@ -52,8 +52,8 @@ Le nom vient du russe **давай** — une interjection familière qui veut di
 | **Frontend** | [React 19](https://react.dev) + [TypeScript](https://www.typescriptlang.org) + [Vite](https://vite.dev) |
 | **Style** | [Tailwind CSS v4](https://tailwindcss.com) |
 | **Icônes** | [Lucide](https://lucide.dev) |
-| **Backend** | [Supabase](https://supabase.com) (Auth + Postgres) |
-| **Voix** | Web Speech API (`speechSynthesis`) |
+| **Backend** | [Supabase](https://supabase.com) (Auth + Postgres + Edge Functions + Storage) |
+| **Voix** | [ElevenLabs](https://elevenlabs.io) via une Edge Function (cache permanent en Storage), repli automatique sur la Web Speech API du navigateur |
 
 ## Démarrer en local
 
@@ -79,7 +79,29 @@ L'app fonctionne sans backend — la progression est alors stockée uniquement d
    VITE_SUPABASE_URL=https://xxxxx.supabase.co
    VITE_SUPABASE_ANON_KEY=ta-cle-anon
    ```
-3. Exécute [`supabase/schema.sql`](./supabase/schema.sql) dans l'éditeur SQL de ton projet (Project → SQL Editor → New query)
+3. Exécute [`supabase/schema.sql`](./supabase/schema.sql) dans l'éditeur SQL de ton projet (Project → SQL Editor → New query) — crée la table de progression **et** le bucket de cache audio
+
+### Activer la prononciation audio (optionnel)
+
+Sans configuration, l'app retombe automatiquement sur la synthèse vocale du navigateur (qualité et fiabilité variables selon le système). Pour une prononciation russe de bien meilleure qualité, fiable sur tous les navigateurs :
+
+1. Crée un compte gratuit sur [elevenlabs.io](https://elevenlabs.io) et récupère une clé API (Profile → API Keys)
+2. Installe la CLI Supabase et connecte-toi :
+   ```bash
+   npm install -g supabase
+   supabase login
+   supabase link --project-ref ton-project-ref
+   ```
+3. Enregistre la clé comme secret (jamais exposée au client) :
+   ```bash
+   supabase secrets set ELEVENLABS_API_KEY=ta-cle-elevenlabs
+   ```
+4. Déploie la fonction :
+   ```bash
+   supabase functions deploy tts
+   ```
+
+Chaque texte n'est synthétisé qu'une seule fois — les appels suivants (de n'importe quel utilisateur) réutilisent le fichier mis en cache dans Supabase Storage, ce qui garde la consommation ElevenLabs minimale.
 
 ### Lancer le serveur de dev
 
@@ -108,7 +130,8 @@ src/
   lib/            client Supabase
   utils/          utilitaires (synthèse vocale)
 supabase/
-  schema.sql      schéma de base de données (table progress + RLS)
+  schema.sql      schéma de base de données (table progress + RLS + bucket tts-cache)
+  functions/tts/  Edge Function : synthèse vocale ElevenLabs avec cache permanent
 ```
 
 ## Feuille de route

@@ -24,6 +24,7 @@ interface QuizQuestion {
 
 function AudioButton({ text, rate = 0.78, size = 'md', label }: { text: string; rate?: number; size?: 'sm' | 'md'; label?: string }) {
   const [playing, setPlaying] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [voicesReady, setVoicesReady] = useState(hasAnyVoice());
   const supported = isSpeechSupported();
 
@@ -32,12 +33,17 @@ function AudioButton({ text, rate = 0.78, size = 'md', label }: { text: string; 
     preloadVoices().then(voices => setVoicesReady(voices.length > 0));
   }, [supported, voicesReady]);
 
-  function handlePlay(e: React.MouseEvent) {
+  async function handlePlay(e: React.MouseEvent) {
     e.stopPropagation();
     if (!supported || !voicesReady) return;
     setPlaying(true);
-    speakRussian(text, rate);
-    setTimeout(() => setPlaying(false), Math.max(800, text.length * 200));
+    setFailed(false);
+    const ok = await speakRussian(text, rate);
+    setPlaying(false);
+    if (!ok) {
+      setFailed(true);
+      setTimeout(() => setFailed(false), 1200);
+    }
   }
 
   const iconSize = size === 'sm' ? 13 : 15;
@@ -60,17 +66,19 @@ function AudioButton({ text, rate = 0.78, size = 'md', label }: { text: string; 
   return (
     <button
       onClick={handlePlay}
-      className="rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+      className={`rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${failed ? 'animate-shake' : ''}`}
       style={{
         width: btnSize,
         height: btnSize,
-        background: playing ? 'var(--primary)' : 'var(--secondary)',
-        border: `1.5px solid ${playing ? 'var(--primary)' : 'transparent'}`,
+        background: failed ? 'rgba(220,38,38,0.12)' : playing ? 'var(--primary)' : 'var(--secondary)',
+        border: `1.5px solid ${failed ? 'rgba(220,38,38,0.4)' : playing ? 'var(--primary)' : 'transparent'}`,
       }}
       aria-label={label ?? `Écouter : ${text}`}
-      title={label ?? `Écouter "${text}"`}
+      title={failed ? 'Lecture audio impossible' : label ?? `Écouter "${text}"`}
     >
-      <Volume2 size={iconSize} style={{ color: playing ? 'white' : 'var(--primary)' }} />
+      {failed
+        ? <VolumeX size={iconSize} style={{ color: 'var(--danger)' }} />
+        : <Volume2 size={iconSize} style={{ color: playing ? 'white' : 'var(--primary)' }} />}
     </button>
   );
 }

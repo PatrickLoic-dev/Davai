@@ -18,6 +18,7 @@ interface SessionCard {
 
 function SpeakButton({ text, size = 16 }: { text: string; size?: number }) {
   const [active, setActive] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [voicesReady, setVoicesReady] = useState(hasAnyVoice());
 
   useEffect(() => {
@@ -25,12 +26,17 @@ function SpeakButton({ text, size = 16 }: { text: string; size?: number }) {
     preloadVoices().then(voices => setVoicesReady(voices.length > 0));
   }, [voicesReady]);
 
-  function handleClick(e: React.MouseEvent) {
+  async function handleClick(e: React.MouseEvent) {
     e.stopPropagation();
     if (!voicesReady) return;
     setActive(true);
-    speakRussian(text, 0.75);
-    setTimeout(() => setActive(false), 1000);
+    setFailed(false);
+    const ok = await speakRussian(text, 0.75);
+    setActive(false);
+    if (!ok) {
+      setFailed(true);
+      setTimeout(() => setFailed(false), 1200);
+    }
   }
 
   if (!voicesReady) {
@@ -50,16 +56,19 @@ function SpeakButton({ text, size = 16 }: { text: string; size?: number }) {
   return (
     <button
       onClick={handleClick}
-      className="rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+      className={`rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${failed ? 'animate-shake' : ''}`}
       style={{
         width: size + 18, height: size + 18,
-        background: active ? 'var(--primary)' : 'var(--secondary)',
-        border: `1.5px solid ${active ? 'var(--primary)' : 'transparent'}`,
+        background: failed ? 'rgba(220,38,38,0.12)' : active ? 'var(--primary)' : 'var(--secondary)',
+        border: `1.5px solid ${failed ? 'rgba(220,38,38,0.4)' : active ? 'var(--primary)' : 'transparent'}`,
         flexShrink: 0,
       }}
       aria-label={`Écouter : ${text}`}
+      title={failed ? 'Lecture audio impossible' : `Écouter : ${text}`}
     >
-      <Volume2 size={size} style={{ color: active ? 'white' : 'var(--primary)' }} />
+      {failed
+        ? <VolumeX size={size} style={{ color: 'var(--danger)' }} />
+        : <Volume2 size={size} style={{ color: active ? 'white' : 'var(--primary)' }} />}
     </button>
   );
 }

@@ -45,3 +45,16 @@ drop trigger if exists progress_set_updated_at on public.progress;
 create trigger progress_set_updated_at
   before update on public.progress
   for each row execute procedure public.set_progress_updated_at();
+
+-- ── Text-to-speech cache ──
+-- Public bucket holding generated pronunciation clips, keyed by a hash of
+-- the source text (see supabase/functions/tts). Public + read-only from the
+-- client: nobody can upload directly, only the tts Edge Function (via the
+-- service role key) writes here.
+insert into storage.buckets (id, name, public)
+values ('tts-cache', 'tts-cache', true)
+on conflict (id) do nothing;
+
+create policy "Anyone can read cached audio"
+  on storage.objects for select
+  using (bucket_id = 'tts-cache');
