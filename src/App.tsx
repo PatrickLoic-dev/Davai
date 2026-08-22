@@ -11,6 +11,7 @@ import FlashcardModule from './components/FlashcardModule';
 import GrammarModule from './components/GrammarModule';
 import ExerciseModule from './components/ExerciseModule';
 import Settings from './components/Settings';
+import StreakIgniteOverlay from './components/StreakIgniteOverlay';
 import Changelog from './pages/Changelog';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -125,6 +126,10 @@ function AppShell() {
 
       {state.newBadge && (
         <BadgeToast badgeId={state.newBadge} onDismiss={() => dispatch({ type: 'CLEAR_NEW_BADGE' })} />
+      )}
+
+      {state.streakIgnited && (
+        <StreakIgniteOverlay onDismiss={() => dispatch({ type: 'CLEAR_STREAK_IGNITED' })} />
       )}
     </div>
   );

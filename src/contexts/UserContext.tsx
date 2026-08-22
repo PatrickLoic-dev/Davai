@@ -25,6 +25,7 @@ export interface UserState {
   notificationsEnabled: boolean;
   newBadge: string | null;
   onboardingComplete: boolean;
+  streakIgnited: boolean;
 }
 
 type Action =
@@ -39,6 +40,7 @@ type Action =
   | { type: 'SET_NOTIFICATIONS'; enabled: boolean }
   | { type: 'TICK_STREAK' }
   | { type: 'COMPLETE_ONBOARDING' }
+  | { type: 'CLEAR_STREAK_IGNITED' }
   | { type: 'HYDRATE'; state: UserState };
 
 function xpToLevel(xp: number): number {
@@ -69,6 +71,7 @@ const INITIAL_STATE: UserState = {
   notificationsEnabled: true,
   newBadge: null,
   onboardingComplete: false,
+  streakIgnited: false,
 };
 
 function buildBadgeStats(state: UserState): BadgeStats {
@@ -96,7 +99,7 @@ function checkNewBadges(state: UserState): string | null {
 function reducer(state: UserState, action: Action): UserState {
   switch (action.type) {
     case 'HYDRATE':
-      return { ...INITIAL_STATE, ...action.state, newBadge: null };
+      return { ...INITIAL_STATE, ...action.state, newBadge: null, streakIgnited: false };
 
     case 'LOGIN': {
       const today = todayISO();
@@ -110,6 +113,7 @@ function reducer(state: UserState, action: Action): UserState {
         streak: newStreak,
         lastActiveDate: today,
         activeDates: addActiveDate(state.activeDates, today),
+        streakIgnited: newStreak === 1 && state.streak !== 1 ? true : state.streakIgnited,
       };
     }
 
@@ -185,6 +189,9 @@ function reducer(state: UserState, action: Action): UserState {
     case 'COMPLETE_ONBOARDING':
       return { ...state, onboardingComplete: true };
 
+    case 'CLEAR_STREAK_IGNITED':
+      return { ...state, streakIgnited: false };
+
     case 'TICK_STREAK': {
       const today = todayISO();
       if (state.lastActiveDate === today) return state;
@@ -195,6 +202,7 @@ function reducer(state: UserState, action: Action): UserState {
         streak: newStreak,
         lastActiveDate: today,
         activeDates: addActiveDate(state.activeDates, today),
+        streakIgnited: newStreak === 1 && state.streak !== 1 ? true : state.streakIgnited,
       };
     }
 
