@@ -1,36 +1,50 @@
 import { useState } from 'react';
-import { LESSONS, Lesson } from '../data/lessons';
+import { LESSONS, Lesson, SubLesson, isLessonComplete, lessonXpReward } from '../data/lessons';
 import { useUser } from '../contexts/UserContext';
 import MatchExercisePlayer from './MatchExercisePlayer';
 
-const GRAMMAR_LESSONS = LESSONS.filter(l => l.module === 'grammar');
 const ALL_LESSONS = LESSONS;
 
-interface LessonViewProps {
-  lesson: Lesson;
-  onBack: () => void;
-  onStartExercises: (lesson: Lesson) => void;
-}
+const MODULE_LABELS: Record<string, string> = {
+  alphabet: 'Alphabet',
+  phonetics: 'Phonétique',
+  pronunciation: 'Prononciation',
+  grammar: 'Grammaire',
+  vocabulary: 'Vocabulaire',
+  numbers: 'Chiffres',
+};
 
-function LessonView({ lesson, onBack, onStartExercises }: LessonViewProps) {
+const MODULE_COLORS: Record<string, string> = {
+  alphabet: 'var(--primary)',
+  phonetics: 'var(--accent)',
+  pronunciation: 'var(--gold)',
+  grammar: 'var(--violet)',
+  vocabulary: 'var(--gold)',
+  numbers: 'var(--success)',
+};
+
+/* ── Sub-lesson content + its own graded evaluation ── */
+function SubLessonView({ lesson, subLesson, onBack, onStartExercises }: {
+  lesson: Lesson; subLesson: SubLesson; onBack: () => void; onStartExercises: () => void;
+}) {
   const { state } = useUser();
-  const isDone = state.completedLessons.includes(lesson.id);
+  const isDone = state.completedLessons.includes(subLesson.id);
 
   return (
     <div className="flex flex-col h-full overflow-y-auto mod-pad gap-6 animate-fade-in">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <button
           onClick={onBack}
           className="text-sm px-3 py-1.5 rounded-lg transition-all hover:opacity-80"
           style={{ color: 'var(--muted-foreground)', background: 'var(--muted)' }}
         >
-          ← Retour
+          ← {lesson.title}
         </button>
         <div
           className="text-xs px-2 py-0.5 rounded-full font-semibold"
           style={{ background: 'rgba(0,212,184,0.15)', color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}
         >
-          +{lesson.xpReward} XP
+          Noté sur {subLesson.maxScore}
         </div>
         {isDone && (
           <div className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(34,197,94,0.15)', color: 'var(--success)' }}>
@@ -41,21 +55,18 @@ function LessonView({ lesson, onBack, onStartExercises }: LessonViewProps) {
 
       <div>
         <h2 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>
-          {lesson.title}
+          {subLesson.title}
         </h2>
-        <div className="text-sm mt-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--muted-foreground)' }}>
-          {lesson.titleRu}
-        </div>
       </div>
 
       <div
         className="p-5 rounded-2xl"
         style={{ background: 'rgba(0,212,184,0.08)', border: '1px solid rgba(0,212,184,0.2)' }}
       >
-        <p style={{ color: 'var(--secondary-foreground)' }}>{lesson.intro}</p>
+        <p style={{ color: 'var(--secondary-foreground)' }}>{subLesson.intro}</p>
       </div>
 
-      {lesson.sections.map((section, i) => (
+      {subLesson.sections.map((section, i) => (
         <div key={i} className="space-y-4">
           <h3 className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>
             {section.heading}
@@ -66,17 +77,10 @@ function LessonView({ lesson, onBack, onStartExercises }: LessonViewProps) {
             <div className="space-y-2">
               {section.examples.map((ex, j) => (
                 <div key={j} className="grammar-example">
-                  <span
-                    className="text-xl font-bold"
-                    style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}
-                    lang="ru"
-                  >
+                  <span className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }} lang="ru">
                     {ex.ru}
                   </span>
-                  <span
-                    className="text-sm"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)' }}
-                  >
+                  <span className="text-sm" style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)' }}>
                     {ex.translit}
                   </span>
                   <span style={{ color: 'var(--secondary-foreground)' }}>{ex.fr}</span>
@@ -86,17 +90,12 @@ function LessonView({ lesson, onBack, onStartExercises }: LessonViewProps) {
           )}
 
           {section.table && (
-            <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+            <div className="rounded-xl overflow-x-auto" style={{ border: '1px solid var(--border)' }}>
               <table className="w-full text-sm" role="table">
                 <thead>
                   <tr style={{ background: 'var(--secondary)' }}>
                     {section.table.headers.map((h) => (
-                      <th
-                        key={h}
-                        className="px-4 py-3 text-left font-semibold"
-                        style={{ color: 'var(--muted-foreground)' }}
-                        scope="col"
-                      >
+                      <th key={h} className="px-4 py-3 text-left font-semibold" style={{ color: 'var(--muted-foreground)' }} scope="col">
                         {h}
                       </th>
                     ))}
@@ -104,22 +103,9 @@ function LessonView({ lesson, onBack, onStartExercises }: LessonViewProps) {
                 </thead>
                 <tbody>
                   {section.table.rows.map((row, ri) => (
-                    <tr
-                      key={ri}
-                      style={{
-                        background: ri % 2 === 0 ? 'var(--card)' : 'var(--secondary)',
-                        borderTop: '1px solid var(--border)',
-                      }}
-                    >
+                    <tr key={ri} style={{ background: ri % 2 === 0 ? 'var(--card)' : 'var(--secondary)', borderTop: '1px solid var(--border)' }}>
                       {row.map((cell, ci) => (
-                        <td
-                          key={ci}
-                          className="px-4 py-3"
-                          style={{
-                            color: ci === 0 ? 'var(--foreground)' : 'var(--secondary-foreground)',
-                            fontFamily: ci === 0 ? 'var(--font-display)' : 'inherit',
-                          }}
-                        >
+                        <td key={ci} className="px-4 py-3" style={{ color: ci === 0 ? 'var(--foreground)' : 'var(--secondary-foreground)', fontFamily: ci === 0 ? 'var(--font-display)' : 'inherit' }}>
                           {cell}
                         </td>
                       ))}
@@ -134,12 +120,81 @@ function LessonView({ lesson, onBack, onStartExercises }: LessonViewProps) {
 
       <div className="sticky bottom-0 pt-4 pb-2" style={{ background: 'var(--background)' }}>
         <button
-          onClick={() => onStartExercises(lesson)}
+          onClick={onStartExercises}
           className="w-full py-4 rounded-2xl font-bold text-lg transition-all hover:opacity-90 active:scale-[0.99]"
           style={{ background: 'var(--primary)', color: 'white', fontFamily: 'var(--font-display)' }}
         >
-          Pratiquer avec les exercices → {lesson.exercises.length} questions
+          {isDone ? 'Repasser l\'évaluation' : `Passer l'évaluation`} → {subLesson.exercises.length} questions
         </button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Lesson: list of its sub-lessons ── */
+function LessonView({ lesson, onBack, onSelectSubLesson }: {
+  lesson: Lesson; onBack: () => void; onSelectSubLesson: (sl: SubLesson) => void;
+}) {
+  const { state } = useUser();
+  const color = MODULE_COLORS[lesson.module] ?? 'var(--accent)';
+
+  return (
+    <div className="flex flex-col h-full overflow-y-auto mod-pad gap-6 animate-fade-in">
+      <button
+        onClick={onBack}
+        className="text-sm px-3 py-1.5 rounded-lg transition-all hover:opacity-80 self-start"
+        style={{ color: 'var(--muted-foreground)', background: 'var(--muted)' }}
+      >
+        ← Leçons
+      </button>
+
+      <div>
+        <h2 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>{lesson.title}</h2>
+        <div className="text-sm mt-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--muted-foreground)' }}>{lesson.titleRu}</div>
+      </div>
+
+      <div className="space-y-3">
+        {lesson.subLessons.map((sl, i) => {
+          const done = state.completedLessons.includes(sl.id);
+          const prevDone = i === 0 || state.completedLessons.includes(lesson.subLessons[i - 1].id);
+          const locked = !prevDone;
+
+          return (
+            <button
+              key={sl.id}
+              onClick={() => !locked && onSelectSubLesson(sl)}
+              disabled={locked}
+              className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl transition-all duration-200 ${!locked ? 'hover:scale-[1.01]' : 'cursor-not-allowed'}`}
+              style={{
+                background: done ? `${color}12` : locked ? 'var(--muted)' : 'var(--card)',
+                border: `1px solid ${done ? `${color}30` : locked ? 'transparent' : 'var(--border)'}`,
+                opacity: locked ? 0.5 : 1,
+              }}
+              aria-label={`Sous-leçon ${sl.title}${locked ? ' (verrouillée)' : done ? ' (terminée)' : ''}`}
+            >
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
+                style={{
+                  background: done ? color : locked ? 'var(--muted-foreground)' : `${color}20`,
+                  color: done ? 'white' : locked ? 'var(--background)' : color,
+                  fontFamily: 'var(--font-display)',
+                }}
+                aria-hidden="true"
+              >
+                {done ? '✓' : locked ? '🔒' : i + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-sm" style={{ color: done ? color : locked ? 'var(--muted-foreground)' : 'var(--foreground)' }}>
+                  {sl.title}
+                </div>
+                <div className="text-xs mt-0.5" style={{ color: 'var(--muted-foreground)', fontFamily: 'var(--font-mono)' }}>
+                  Noté sur {sl.maxScore} · {sl.exercises.length} questions
+                </div>
+              </div>
+              {!locked && <span style={{ color: 'var(--muted-foreground)' }} aria-hidden="true">→</span>}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -147,44 +202,40 @@ function LessonView({ lesson, onBack, onStartExercises }: LessonViewProps) {
 
 export default function GrammarModule() {
   const { state } = useUser();
-  const [selected, setSelected] = useState<Lesson | null>(null);
-  const [exerciseLesson, setExerciseLesson] = useState<Lesson | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [selectedSub, setSelectedSub] = useState<SubLesson | null>(null);
+  const [exerciseSub, setExerciseSub] = useState<SubLesson | null>(null);
 
-  if (exerciseLesson) {
+  if (selectedLesson && exerciseSub) {
     return (
       <ExerciseInline
-        lesson={exerciseLesson}
-        onBack={() => setExerciseLesson(null)}
-        onDone={() => { setExerciseLesson(null); setSelected(null); }}
+        subLesson={exerciseSub}
+        onBack={() => setExerciseSub(null)}
+        onDone={() => setExerciseSub(null)}
       />
     );
   }
 
-  if (selected) {
+  if (selectedLesson && selectedSub) {
+    return (
+      <SubLessonView
+        lesson={selectedLesson}
+        subLesson={selectedSub}
+        onBack={() => setSelectedSub(null)}
+        onStartExercises={() => setExerciseSub(selectedSub)}
+      />
+    );
+  }
+
+  if (selectedLesson) {
     return (
       <LessonView
-        lesson={selected}
-        onBack={() => setSelected(null)}
-        onStartExercises={(l) => { setExerciseLesson(l); }}
+        lesson={selectedLesson}
+        onBack={() => setSelectedLesson(null)}
+        onSelectSubLesson={(sl) => setSelectedSub(sl)}
       />
     );
   }
-
-  const MODULE_LABELS: Record<string, string> = {
-    alphabet: 'Alphabet',
-    phonetics: 'Phonétique',
-    grammar: 'Grammaire',
-    vocabulary: 'Vocabulaire',
-    numbers: 'Chiffres',
-  };
-
-  const MODULE_COLORS: Record<string, string> = {
-    alphabet: 'var(--primary)',
-    phonetics: 'var(--accent)',
-    grammar: 'var(--violet)',
-    vocabulary: 'var(--gold)',
-    numbers: 'var(--success)',
-  };
 
   return (
     <div className="mod-pad overflow-y-auto h-full space-y-6">
@@ -193,21 +244,25 @@ export default function GrammarModule() {
           Leçons · Parcours A1
         </h2>
         <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
-          {state.completedLessons.length}/{ALL_LESSONS.length} leçons terminées
+          {ALL_LESSONS.filter(l => isLessonComplete(l, state.completedLessons)).length}/{ALL_LESSONS.length} leçons terminées
         </p>
       </div>
 
       <div className="space-y-3">
         {ALL_LESSONS.map((lesson, i) => {
-          const done = state.completedLessons.includes(lesson.id);
-          const prereqsDone = lesson.prerequisites.every(p => state.completedLessons.includes(p));
+          const done = isLessonComplete(lesson, state.completedLessons);
+          const doneSubCount = lesson.subLessons.filter(sl => state.completedLessons.includes(sl.id)).length;
+          const prereqsDone = lesson.prerequisites.every(p => {
+            const prereqLesson = ALL_LESSONS.find(l => l.id === p);
+            return prereqLesson ? isLessonComplete(prereqLesson, state.completedLessons) : true;
+          });
           const locked = !prereqsDone;
           const color = MODULE_COLORS[lesson.module] ?? 'var(--accent)';
 
           return (
             <button
               key={lesson.id}
-              onClick={() => !locked && setSelected(lesson)}
+              onClick={() => !locked && setSelectedLesson(lesson)}
               disabled={locked}
               className={`w-full text-left flex items-center gap-5 p-5 rounded-2xl transition-all duration-200 animate-slide-up delay-${i * 50} ${!locked ? 'hover:scale-[1.01]' : 'cursor-not-allowed'}`}
               style={{
@@ -217,7 +272,6 @@ export default function GrammarModule() {
               }}
               aria-label={`Leçon ${lesson.title}${locked ? ' (verrouillée)' : done ? ' (terminée)' : ''}`}
             >
-              {/* Step indicator */}
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
                 style={{
@@ -231,24 +285,21 @@ export default function GrammarModule() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold" style={{ color: done ? color : locked ? 'var(--muted-foreground)' : 'var(--foreground)' }}>
                     {lesson.title}
                   </span>
-                  <span
-                    className="text-xs px-1.5 py-0.5 rounded font-semibold"
-                    style={{ background: `${MODULE_COLORS[lesson.module]}20`, color: MODULE_COLORS[lesson.module] }}
-                  >
+                  <span className="text-xs px-1.5 py-0.5 rounded font-semibold" style={{ background: `${color}20`, color }}>
                     {MODULE_LABELS[lesson.module]}
                   </span>
                 </div>
                 <div className="text-xs mt-0.5 truncate" style={{ color: 'var(--muted-foreground)', fontFamily: 'var(--font-mono)' }}>
-                  {lesson.titleRu} · {lesson.exercises.length} exercices
+                  {lesson.titleRu} · {doneSubCount}/{lesson.subLessons.length} sous-leçons
                 </div>
               </div>
 
               <div className="text-sm font-bold shrink-0" style={{ fontFamily: 'var(--font-mono)', color: 'var(--gold)' }}>
-                +{lesson.xpReward} XP
+                +{lessonXpReward(lesson)} XP
               </div>
 
               {!locked && !done && (
@@ -262,8 +313,8 @@ export default function GrammarModule() {
   );
 }
 
-/* Inline exercise runner used from Grammar view */
-function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: () => void; onDone: () => void }) {
+/* ── Graded evaluation for a single sub-lesson, scored out of maxScore ── */
+function ExerciseInline({ subLesson, onBack, onDone }: { subLesson: SubLesson; onBack: () => void; onDone: () => void }) {
   const { dispatch } = useUser();
   const [qIdx, setQIdx] = useState(0);
   const [answered, setAnswered] = useState<number | null>(null);
@@ -274,8 +325,9 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
   const [done, setDone] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
 
-  const questions = lesson.exercises;
+  const questions = subLesson.exercises;
   const q = questions[qIdx];
+  const points = Math.round(subLesson.maxScore / questions.length);
 
   function handleMCQ(idx: number) {
     if (q.type !== 'mcq') return;
@@ -303,8 +355,11 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
   function next() {
     if (qIdx + 1 >= questions.length) {
       setDone(true);
-      dispatch({ type: 'COMPLETE_LESSON', lessonId: lesson.id });
-      dispatch({ type: 'ADD_XP', amount: lesson.xpReward });
+      const passed = score / questions.length >= 0.5;
+      if (passed) {
+        dispatch({ type: 'COMPLETE_LESSON', lessonId: subLesson.id });
+        dispatch({ type: 'ADD_XP', amount: subLesson.maxScore });
+      }
     } else {
       setQIdx(q => q + 1);
       setAnswered(null);
@@ -315,18 +370,26 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
   }
 
   if (done) {
-    const pct = Math.round((score / questions.length) * 100);
+    const gradedScore = Math.round((score / questions.length) * subLesson.maxScore);
+    const passed = score / questions.length >= 0.5;
     return (
       <div className="flex flex-col items-center justify-center h-full gap-8 mod-pad animate-fade-in">
-        <div className="text-6xl" aria-hidden="true">{pct >= 80 ? '🏆' : '📚'}</div>
+        <div className="text-6xl" aria-hidden="true">{passed ? (gradedScore === subLesson.maxScore ? '🏆' : '🎉') : '📚'}</div>
         <div className="text-center">
-          <h2 className="text-3xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>Leçon terminée !</h2>
-          <p className="mt-1" style={{ color: 'var(--muted-foreground)' }}>{score}/{questions.length} · {pct}%</p>
-          <p className="text-sm mt-2" style={{ color: 'var(--gold)' }}>+{lesson.xpReward} XP gagné !</p>
+          <h2 className="text-3xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>
+            {passed ? 'Évaluation réussie !' : 'Pas encore validé'}
+          </h2>
+          <p className="mt-2 text-4xl font-bold" style={{ fontFamily: 'var(--font-display)', color: passed ? 'var(--success)' : 'var(--primary)' }}>
+            {gradedScore}/{subLesson.maxScore}
+          </p>
+          <p className="mt-1 text-sm" style={{ color: 'var(--muted-foreground)' }}>{score}/{questions.length} bonnes réponses</p>
+          {passed
+            ? <p className="text-sm mt-2" style={{ color: 'var(--gold)' }}>+{subLesson.maxScore} XP gagné !</p>
+            : <p className="text-sm mt-2" style={{ color: 'var(--muted-foreground)' }}>Il faut au moins la moitié des points pour valider — retentez votre chance !</p>}
         </div>
         <div className="flex gap-3">
           <button onClick={onDone} className="px-6 py-3 rounded-xl font-semibold" style={{ background: 'var(--primary)', color: 'white' }}>
-            Retour aux leçons
+            Retour
           </button>
           <button onClick={onBack} className="px-6 py-3 rounded-xl font-semibold" style={{ background: 'var(--secondary)', color: 'var(--foreground)' }}>
             Revoir la leçon
@@ -342,7 +405,9 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
     <div className="flex flex-col h-full mod-pad gap-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <button onClick={onBack} className="text-sm px-3 py-1.5 rounded-lg" style={{ color: 'var(--muted-foreground)', background: 'var(--muted)' }}>← Leçon</button>
-        <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)', fontSize: '0.85rem' }}>{qIdx + 1}/{questions.length} · ✓ {score}</span>
+        <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)', fontSize: '0.85rem' }}>
+          {qIdx + 1}/{questions.length} · {score * points}/{subLesson.maxScore} pts
+        </span>
       </div>
       <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--muted)' }}>
         <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progressPct}%`, background: 'var(--violet)' }} />
@@ -351,7 +416,7 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
       <div className="flex-1 flex flex-col items-center justify-center gap-8 max-w-lg mx-auto w-full">
         <div className="w-full rounded-2xl p-6 space-y-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
           <div className="text-xs font-semibold" style={{ color: 'var(--violet)', fontFamily: 'var(--font-mono)' }}>
-            {q.type === 'mcq' ? 'QCM' : q.type === 'fill' ? 'Texte à trous' : 'Association'}
+            {q.type === 'mcq' ? 'QCM' : q.type === 'fill' ? 'Texte à trous' : 'Association'} · {points} pts
           </div>
           {q.type !== 'match' && (
             <p className="text-lg font-semibold leading-snug" style={{ color: 'var(--foreground)' }}>{q.question}</p>
@@ -426,11 +491,7 @@ function ExerciseInline({ lesson, onBack, onDone }: { lesson: Lesson; onBack: ()
               </div>
             )}
             {!fillSubmitted && (
-              <button
-                type="submit"
-                className="w-full py-3 rounded-xl font-semibold"
-                style={{ background: 'var(--primary)', color: 'white' }}
-              >
+              <button type="submit" className="w-full py-3 rounded-xl font-semibold" style={{ background: 'var(--primary)', color: 'white' }}>
                 Valider
               </button>
             )}

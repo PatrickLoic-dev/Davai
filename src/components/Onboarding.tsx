@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Globe, Film, Briefcase, Target, Zap, Flame, Trophy, Check, SkipForward } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
-import { LESSONS } from '../data/lessons';
+import { LESSONS, lessonXpReward } from '../data/lessons';
 import { AppLogo } from './Logo';
 
 interface Props { onComplete: () => void; }
@@ -101,8 +101,12 @@ export default function Onboarding({ onComplete }: Props) {
       if (!correct) return;
       const lesson = LESSONS.find(l => l.id === lessonId);
       if (!lesson) return;
-      dispatch({ type: 'COMPLETE_LESSON', lessonId });
-      dispatch({ type: 'ADD_XP', amount: lesson.xpReward });
+      // A correct placement answer counts as "already knows this lesson" —
+      // mark every one of its sub-lessons complete, silently (no streak).
+      lesson.subLessons.forEach(sl => {
+        dispatch({ type: 'COMPLETE_LESSON', lessonId: sl.id, silent: true });
+      });
+      dispatch({ type: 'ADD_XP', amount: lessonXpReward(lesson) });
     });
   }, [step, placementResults, dispatch]);
 

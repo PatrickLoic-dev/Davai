@@ -15,6 +15,7 @@ import StreakIgniteOverlay from './components/StreakIgniteOverlay';
 import Changelog from './pages/Changelog';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import { isPWA } from './utils/pwa';
 
 type Screen = 'home' | 'auth' | 'onboarding' | 'app';
 
@@ -49,7 +50,10 @@ function BadgeToast({ badgeId, onDismiss }: { badgeId: string; onDismiss: () => 
 
 function AppShell() {
   const { state, dispatch, passwordRecovery, clearPasswordRecovery } = useUser();
-  const [screen, setScreen] = useState<Screen>('home');
+  // Installed PWA: skip the marketing homepage entirely — land straight on
+  // the login screen (and, once the session check resolves, straight into
+  // the dashboard if a session was already persisted).
+  const [screen, setScreen] = useState<Screen>(() => (isPWA() ? 'auth' : 'home'));
   const [view, setView]     = useState<View>('path');
   const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
 
@@ -62,7 +66,7 @@ function AppShell() {
         setScreen('app');
       }
     } else if (screen === 'app' || screen === 'onboarding') {
-      setScreen('home');
+      setScreen(isPWA() ? 'auth' : 'home');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.isAuthenticated, state.onboardingComplete]);
@@ -70,6 +74,11 @@ function AppShell() {
   function handleOnboardingComplete() {
     dispatch({ type: 'COMPLETE_ONBOARDING' });
     setScreen('app');
+  }
+
+  // In the installed PWA there's no marketing homepage to return to.
+  function goHome() {
+    setScreen(isPWA() ? 'app' : 'home');
   }
 
   /* ── Standalone, deep-linkable pages (independent of auth state) ── */
@@ -91,7 +100,7 @@ function AppShell() {
     );
 
   if (screen === 'auth')
-    return <AuthScreen initialMode={authMode} onBack={() => setScreen('home')} />;
+    return <AuthScreen initialMode={authMode} onBack={isPWA() ? undefined : () => setScreen('home')} />;
 
   if (screen === 'onboarding')
     return <Onboarding onComplete={handleOnboardingComplete} />;
@@ -116,7 +125,7 @@ function AppShell() {
 
       {/* Sidebar box — hidden on mobile via CSS */}
       <div className="app-nav-sidebar app-sidebar-box">
-        <Nav current={view} onChange={setView} onHome={() => setScreen('home')} />
+        <Nav current={view} onChange={setView} onHome={goHome} />
       </div>
 
       {/* Main content box */}
@@ -125,7 +134,7 @@ function AppShell() {
       </main>
 
       {/* Bottom nav — mobile only */}
-      <Nav current={view} onChange={setView} onHome={() => setScreen('home')} mobile />
+      <Nav current={view} onChange={setView} onHome={goHome} mobile />
 
       {state.newBadge && (
         <BadgeToast badgeId={state.newBadge} onDismiss={() => dispatch({ type: 'CLEAR_NEW_BADGE' })} />

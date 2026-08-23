@@ -19,6 +19,13 @@ const NAV_ITEMS: { id: View; label: string; Icon: React.ElementType }[] = [
   { id: 'exercises',  label: 'Exercices',   Icon: PenLine  },
 ];
 
+// Mobile bottom bar also needs a way to reach Settings/profile — on desktop
+// it lives in the sidebar's footer, which doesn't exist on small screens.
+const MOBILE_NAV_ITEMS: { id: View; label: string; Icon: React.ElementType }[] = [
+  ...NAV_ITEMS,
+  { id: 'settings', label: 'Profil', Icon: Settings },
+];
+
 function SidebarNav({ current, onChange, onHome }: NavProps) {
   const { state, signOut } = useUser();
   return (
@@ -149,7 +156,7 @@ function BottomNav({ current, onChange }: NavProps) {
       style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50, background: 'white', borderTop: '1px solid #EBEBEB', display: 'flex', alignItems: 'stretch', height: '60px' }}
       aria-label="Navigation mobile"
     >
-      {NAV_ITEMS.map(({ id, label, Icon }) => {
+      {MOBILE_NAV_ITEMS.map(({ id, label, Icon }) => {
         const active = current === id;
         return (
           <button key={id} onClick={() => onChange(id)}

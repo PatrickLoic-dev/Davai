@@ -26,9 +26,9 @@ export default function ExerciseModule() {
   const exercises = useMemo<ExerciseSet[]>(() => [
     {
       lessonTitle: 'Mix aléatoire — toutes leçons',
-      exercises: shuffle(LESSONS.flatMap(l => l.exercises)).slice(0, 10),
+      exercises: shuffle(LESSONS.flatMap(l => l.subLessons.flatMap(sl => sl.exercises))).slice(0, 10),
     },
-    ...LESSONS.map(l => ({ lessonTitle: l.title, exercises: l.exercises })),
+    ...LESSONS.map(l => ({ lessonTitle: l.title, exercises: l.subLessons.flatMap(sl => sl.exercises) })),
   ], []);
 
   function startSet(set: ExerciseSet) {

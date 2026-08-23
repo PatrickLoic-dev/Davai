@@ -5,7 +5,7 @@ import {
   Flame, Trophy, BookMarked, Layers,
 } from 'lucide-react';
 import { useUser, xpProgress } from '../contexts/UserContext';
-import { LESSONS } from '../data/lessons';
+import { LESSONS, isLessonComplete } from '../data/lessons';
 import { BADGES } from '../data/badges';
 import { View } from './Nav';
 import StreakCalendar from './StreakCalendar';
@@ -20,21 +20,28 @@ interface PathStep {
 
 const PATH: PathStep[] = [
   { id: 'step-alphabet',   step: 1, title: "L'Alphabet Cyrillique", titleRu: 'Алфавит',      subtitle: '33 lettres · Quiz de reconnaissance',           Icon: BookOpen,      lessonId: 'alphabet-intro',    view: 'alphabet',   color: '#4338CA', xp: 50 },
-  { id: 'step-phonetics',  step: 2, title: 'Sons spéciaux',         titleRu: 'Фонетика',      subtitle: 'Ы, Ъ, Ь · Prononciation authentique',           Icon: Mic,           lessonId: 'phonetics-special', view: 'grammar',    color: '#7C3AED', xp: 60 },
-  { id: 'step-greetings',  step: 3, title: 'Salutations',           titleRu: 'Приветствия',   subtitle: 'Vocabulaire de base · Flashcards SRS',           Icon: MessageSquare, lessonId: null,                view: 'vocabulary', color: '#059669', xp: 40 },
-  { id: 'step-numbers',    step: 4, title: 'Chiffres 0–100',        titleRu: 'Числа',         subtitle: "Nombres · Règles d'accord",                      Icon: Hash,          lessonId: 'numbers-cardinal',  view: 'grammar',    color: '#D97706', xp: 60 },
-  { id: 'step-gender',     step: 5, title: 'Genres grammaticaux',   titleRu: 'Род',           subtitle: 'Masculin · Féminin · Neutre',                    Icon: Ruler,         lessonId: 'grammar-gender',    view: 'grammar',    color: '#DC2626', xp: 70 },
-  { id: 'step-cases',      step: 6, title: 'Nominatif & Accusatif', titleRu: 'Падежи',        subtitle: 'Deux cas essentiels · Exemples en contexte',     Icon: Columns2,      lessonId: 'grammar-cases',     view: 'grammar',    color: '#0891B2', xp: 80 },
-  { id: 'step-verbs',      step: 7, title: 'Verbes au présent',     titleRu: 'Глаголы',       subtitle: 'Conjugaisons 1 & 2 · читать, говорить',          Icon: MessageCircle, lessonId: 'grammar-verbs',     view: 'grammar',    color: '#7C3AED', xp: 90 },
-  { id: 'step-eval',       step: 8, title: 'Évaluation A1',         titleRu: 'Тест',          subtitle: 'Bilan final · Mix de toutes les compétences',    Icon: Target,        lessonId: null,                view: 'exercises',  color: '#0A0A0A', xp: 100 },
+  { id: 'step-syllables',  step: 2, title: 'Syllabes communes',     titleRu: 'Слоги',         subtitle: 'Voyelles dures/douces · Lecture syllabique',     Icon: Mic,           lessonId: 'syllables',         view: 'grammar',    color: '#D97706', xp: 40 },
+  { id: 'step-phonetics',  step: 3, title: 'Sons spéciaux',         titleRu: 'Фонетика',      subtitle: 'Ы, Ъ, Ь · Prononciation authentique',           Icon: Mic,           lessonId: 'phonetics-special', view: 'grammar',    color: '#7C3AED', xp: 60 },
+  { id: 'step-greetings',  step: 4, title: 'Salutations',           titleRu: 'Приветствия',   subtitle: 'Vocabulaire de base · Flashcards SRS',           Icon: MessageSquare, lessonId: null,                view: 'vocabulary', color: '#059669', xp: 40 },
+  { id: 'step-numbers',    step: 5, title: 'Chiffres 0–100',        titleRu: 'Числа',         subtitle: "Nombres · Règles d'accord",                      Icon: Hash,          lessonId: 'numbers-cardinal',  view: 'grammar',    color: '#D97706', xp: 60 },
+  { id: 'step-gender',     step: 6, title: 'Genres grammaticaux',   titleRu: 'Род',           subtitle: 'Masculin · Féminin · Neutre',                    Icon: Ruler,         lessonId: 'grammar-gender',    view: 'grammar',    color: '#DC2626', xp: 70 },
+  { id: 'step-cases',      step: 7, title: 'Nominatif & Accusatif', titleRu: 'Падежи',        subtitle: 'Deux cas essentiels · Exemples en contexte',     Icon: Columns2,      lessonId: 'grammar-cases',     view: 'grammar',    color: '#0891B2', xp: 80 },
+  { id: 'step-verbs',      step: 8, title: 'Verbes au présent',     titleRu: 'Глаголы',       subtitle: 'Conjugaisons 1 & 2 · читать, говорить',          Icon: MessageCircle, lessonId: 'grammar-verbs',     view: 'grammar',    color: '#7C3AED', xp: 90 },
+  { id: 'step-eval',       step: 9, title: 'Évaluation A1',         titleRu: 'Тест',          subtitle: 'Bilan final · Mix de toutes les compétences',    Icon: Target,        lessonId: null,                view: 'exercises',  color: '#0A0A0A', xp: 100 },
 ];
 
-function getStatus(step: PathStep, completed: string[], all: PathStep[]): 'done' | 'active' | 'locked' {
-  if (step.lessonId && completed.includes(step.lessonId)) return 'done';
+function isStepDone(step: PathStep, completedSubLessons: string[]): boolean {
+  if (!step.lessonId) return false;
+  const lesson = LESSONS.find(l => l.id === step.lessonId);
+  return lesson ? isLessonComplete(lesson, completedSubLessons) : false;
+}
+
+function getStatus(step: PathStep, completedSubLessons: string[], all: PathStep[]): 'done' | 'active' | 'locked' {
+  if (isStepDone(step, completedSubLessons)) return 'done';
   const prevIdx = all.findIndex(s => s.id === step.id) - 1;
   if (prevIdx < 0) return 'active';
   const prev = all[prevIdx];
-  return (prev.lessonId ? completed.includes(prev.lessonId) : true) ? 'active' : 'locked';
+  return isStepDone(prev, completedSubLessons) || !prev.lessonId ? 'active' : 'locked';
 }
 
 /* ── small stat tile ── */
@@ -53,7 +60,7 @@ export default function LearningPath({ onNavigate }: Props) {
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
 
   const progress = xpProgress(state.xp);
-  const completed = state.completedLessons.length;
+  const completed = LESSONS.filter(l => isLessonComplete(l, state.completedLessons)).length;
   const total = LESSONS.length;
   const pct = total ? Math.round((completed / total) * 100) : 0;
   const learnedCards = Object.values(state.srsState).filter(s => s === 'learned').length;

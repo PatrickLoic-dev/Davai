@@ -67,6 +67,14 @@ describe('userReducer', () => {
     expect(state.streakIgnited).toBe(false);
   });
 
+  it('COMPLETE_LESSON with silent:true (placement test) never touches the streak', () => {
+    const state = userReducer(INITIAL_USER_STATE, { type: 'COMPLETE_LESSON', lessonId: 'alphabet-intro-1', silent: true });
+    expect(state.completedLessons).toContain('alphabet-intro-1');
+    expect(state.streak).toBe(0);
+    expect(state.streakIgnited).toBe(false);
+    expect(state.lastActiveDate).toBeNull();
+  });
+
   it('LOGOUT resets everything back to the initial state', () => {
     const loggedIn = userReducer(INITIAL_USER_STATE, { type: 'LOGIN', profile });
     const after = userReducer(loggedIn, { type: 'LOGOUT' });

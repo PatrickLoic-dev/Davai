@@ -6,5 +6,14 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undef
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl!, supabaseAnonKey!)
+  ? createClient(supabaseUrl!, supabaseAnonKey!, {
+      auth: {
+        // Explicit (these are the defaults) — the session must survive the
+        // app being closed and reopened, which is exactly how the PWA is
+        // meant to behave: reopen the icon, land straight in the dashboard.
+        persistSession: true,
+        autoRefreshToken: true,
+        ...(typeof window !== 'undefined' ? { storage: window.localStorage } : {}),
+      },
+    })
   : null;

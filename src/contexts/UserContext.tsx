@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer, useEffect, useRef, useState, ReactNode } from 'react';
 import { BADGES, BadgeStats } from '../data/badges';
 import { SRSState } from '../data/vocabulary';
+import { LESSONS, isLessonComplete } from '../data/lessons';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface UserProfile {
@@ -32,7 +33,7 @@ export type Action =
   | { type: 'LOGIN'; profile: UserProfile }
   | { type: 'LOGOUT' }
   | { type: 'ADD_XP'; amount: number }
-  | { type: 'COMPLETE_LESSON'; lessonId: string }
+  | { type: 'COMPLETE_LESSON'; lessonId: string; silent?: boolean }
   | { type: 'UPDATE_SRS'; cardId: string; rating: 'hard' | 'ok' | 'easy' }
   | { type: 'SET_ALPHABET_QUIZ_BEST'; score: number }
   | { type: 'UNLOCK_BADGE'; badgeId: string }
@@ -95,8 +96,11 @@ const INITIAL_STATE: UserState = {
 
 function buildBadgeStats(state: UserState): BadgeStats {
   const learnedCards = Object.values(state.srsState).filter(s => s === 'learned').length;
+  // `state.completedLessons` holds finished sub-lesson ids; badges care about
+  // whole (top-level) lessons, so derive which of those are fully done.
+  const fullyDoneLessons = LESSONS.filter(l => isLessonComplete(l, state.completedLessons)).map(l => l.id);
   return {
-    completedLessons: state.completedLessons,
+    completedLessons: fullyDoneLessons,
     totalXP: state.xp,
     streak: state.streak,
     alphabetQuizScore: state.alphabetQuizBest,
@@ -151,7 +155,10 @@ export function userReducer(state: UserState, action: Action): UserState {
       if (state.completedLessons.includes(action.lessonId)) return state;
       const updated: UserState = {
         ...state,
-        ...bumpStreak(state),
+        // The placement test (onboarding) marks lessons complete silently —
+        // it represents prior knowledge, not a day of active study, so it
+        // must not touch the streak or trigger the ignite animation.
+        ...(action.silent ? {} : bumpStreak(state)),
         completedLessons: [...state.completedLessons, action.lessonId],
       };
       const newBadge = checkNewBadges(updated);
