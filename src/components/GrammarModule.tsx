@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LESSONS, Lesson, SubLesson, isLessonComplete, lessonXpReward } from '../data/lessons';
+import { LESSONS, Lesson, SubLesson, isLessonComplete, lessonXpReward, CEFR_LEVELS } from '../data/lessons';
 import { useUser } from '../contexts/UserContext';
 import MatchExercisePlayer from './MatchExercisePlayer';
 
@@ -153,7 +153,9 @@ function LessonView({ lesson, onBack, onSelectSubLesson }: {
         <div className="text-sm mt-1" style={{ fontFamily: 'var(--font-display)', color: 'var(--muted-foreground)' }}>{lesson.titleRu}</div>
       </div>
 
-      <div className="space-y-3">
+      <div className="relative">
+        <div aria-hidden="true" style={{ position: 'absolute', left: '37px', top: '20px', bottom: '20px', width: '2px', background: 'var(--border)' }} />
+        <div className="space-y-3 relative">
         {lesson.subLessons.map((sl, i) => {
           const done = state.completedLessons.includes(sl.id);
           const prevDone = i === 0 || state.completedLessons.includes(lesson.subLessons[i - 1].id);
@@ -195,13 +197,20 @@ function LessonView({ lesson, onBack, onSelectSubLesson }: {
             </button>
           );
         })}
+        </div>
       </div>
     </div>
   );
 }
 
+const LEVEL_LABELS: Record<string, string> = {
+  A1: 'Débutant', A2: 'Élémentaire', B1: 'Intermédiaire',
+  B2: 'Intermédiaire+', C1: 'Avancé', C2: 'Maîtrise',
+};
+
 export default function GrammarModule() {
   const { state } = useUser();
+  const [activeLevel, setActiveLevel] = useState<string>(state.cefrLevel);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [selectedSub, setSelectedSub] = useState<SubLesson | null>(null);
   const [exerciseSub, setExerciseSub] = useState<SubLesson | null>(null);
@@ -237,19 +246,59 @@ export default function GrammarModule() {
     );
   }
 
+  const levelLessons = ALL_LESSONS.filter(l => l.level === activeLevel);
+
   return (
     <div className="mod-pad overflow-y-auto h-full space-y-6">
       <div>
         <h2 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>
-          Leçons · Parcours A1
+          Leçons
         </h2>
         <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
-          {ALL_LESSONS.filter(l => isLessonComplete(l, state.completedLessons)).length}/{ALL_LESSONS.length} leçons terminées
+          {levelLessons.filter(l => isLessonComplete(l, state.completedLessons)).length}/{levelLessons.length} leçons terminées · Niveau {activeLevel}
         </p>
       </div>
 
-      <div className="space-y-3">
-        {ALL_LESSONS.map((lesson, i) => {
+      {/* Level tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Niveau CECR">
+        {CEFR_LEVELS.map(lvl => {
+          const hasContent = ALL_LESSONS.some(l => l.level === lvl);
+          const active = activeLevel === lvl;
+          return (
+            <button
+              key={lvl}
+              role="tab"
+              aria-selected={active}
+              disabled={!hasContent}
+              onClick={() => setActiveLevel(lvl)}
+              className="shrink-0 px-3.5 py-2 rounded-xl text-sm font-bold transition-all"
+              style={{
+                fontFamily: 'var(--font-display)',
+                background: active ? 'var(--primary)' : hasContent ? 'var(--card)' : 'var(--muted)',
+                color: active ? 'white' : hasContent ? 'var(--foreground)' : 'var(--muted-foreground)',
+                border: `1px solid ${active ? 'var(--primary)' : 'var(--border)'}`,
+                opacity: hasContent ? 1 : 0.5,
+                cursor: hasContent ? 'pointer' : 'not-allowed',
+              }}
+              title={hasContent ? LEVEL_LABELS[lvl] : `${LEVEL_LABELS[lvl]} — bientôt disponible`}
+            >
+              {lvl}
+            </button>
+          );
+        })}
+      </div>
+
+      {levelLessons.length === 0 && (
+        <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--muted)', border: '1px dashed var(--border)' }}>
+          <p className="font-semibold" style={{ color: 'var(--foreground)' }}>Contenu {activeLevel} à venir</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>On y travaille — reviens bientôt !</p>
+        </div>
+      )}
+
+      <div className="relative">
+        <div aria-hidden="true" style={{ position: 'absolute', left: '39px', top: '20px', bottom: '20px', width: '2px', background: 'var(--border)' }} />
+        <div className="space-y-3 relative">
+        {levelLessons.map((lesson, i) => {
           const done = isLessonComplete(lesson, state.completedLessons);
           const doneSubCount = lesson.subLessons.filter(sl => state.completedLessons.includes(sl.id)).length;
           const prereqsDone = lesson.prerequisites.every(p => {
@@ -308,6 +357,7 @@ export default function GrammarModule() {
             </button>
           );
         })}
+        </div>
       </div>
     </div>
   );

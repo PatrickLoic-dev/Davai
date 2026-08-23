@@ -47,14 +47,24 @@ export interface SubLesson {
   maxScore: 20 | 30;
 }
 
+export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
+export const CEFR_LEVELS: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+
 export interface Lesson {
   id: string;
   title: string;
   titleRu: string;
   module: 'alphabet' | 'phonetics' | 'pronunciation' | 'vocabulary' | 'grammar' | 'numbers';
+  level: CEFRLevel;
   order: number;
   prerequisites: string[];
   subLessons: SubLesson[];
+}
+
+/** Lessons for one CEFR level, in display order. */
+export function lessonsForLevel(level: CEFRLevel): Lesson[] {
+  return LESSONS.filter(l => l.level === level).sort((a, b) => a.order - b.order);
 }
 
 /** Total XP a lesson is worth — sum of what each sub-lesson pays out. */
@@ -81,6 +91,7 @@ export const LESSONS: Lesson[] = [
     title: "L'alphabet cyrillique",
     titleRu: 'Алфавит',
     module: 'alphabet',
+    level: 'A1',
     order: 1,
     prerequisites: [],
     subLessons: [
@@ -178,6 +189,7 @@ export const LESSONS: Lesson[] = [
     title: 'Syllabes communes',
     titleRu: 'Слоги',
     module: 'pronunciation',
+    level: 'A1',
     order: 2,
     prerequisites: ['alphabet-intro'],
     subLessons: [
@@ -303,6 +315,7 @@ export const LESSONS: Lesson[] = [
     title: 'Sons spéciaux : Ы, Ъ, Ь',
     titleRu: 'Фонетика',
     module: 'phonetics',
+    level: 'A1',
     order: 3,
     prerequisites: ['alphabet-intro'],
     subLessons: [
@@ -391,6 +404,7 @@ export const LESSONS: Lesson[] = [
     title: 'Les genres grammaticaux',
     titleRu: 'Род существительных',
     module: 'grammar',
+    level: 'A1',
     order: 4,
     prerequisites: ['alphabet-intro'],
     subLessons: [
@@ -489,6 +503,7 @@ export const LESSONS: Lesson[] = [
     title: 'Nominatif & Accusatif',
     titleRu: 'Именительный и Винительный падежи',
     module: 'grammar',
+    level: 'A1',
     order: 5,
     prerequisites: ['grammar-gender'],
     subLessons: [
@@ -566,6 +581,7 @@ export const LESSONS: Lesson[] = [
     title: 'Présent des verbes réguliers',
     titleRu: 'Глаголы — настоящее время',
     module: 'grammar',
+    level: 'A1',
     order: 6,
     prerequisites: ['grammar-gender'],
     subLessons: [
@@ -653,6 +669,7 @@ export const LESSONS: Lesson[] = [
     title: 'Les chiffres 0 à 100',
     titleRu: 'Числа',
     module: 'numbers',
+    level: 'A1',
     order: 7,
     prerequisites: ['alphabet-intro'],
     subLessons: [

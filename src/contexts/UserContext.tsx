@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, useEffect, useRef, useState, ReactNode } from 'react';
 import { BADGES, BadgeStats } from '../data/badges';
 import { SRSState } from '../data/vocabulary';
-import { LESSONS, isLessonComplete } from '../data/lessons';
+import { LESSONS, isLessonComplete, CEFRLevel } from '../data/lessons';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface UserProfile {
@@ -27,6 +27,9 @@ export interface UserState {
   newBadge: string | null;
   onboardingComplete: boolean;
   streakIgnited: boolean;
+  /** CEFR level the user is currently studying at — assigned by the
+   * placement test (or a level-change test later), defaults to A1. */
+  cefrLevel: CEFRLevel;
 }
 
 export type Action =
@@ -41,6 +44,7 @@ export type Action =
   | { type: 'SET_NOTIFICATIONS'; enabled: boolean }
   | { type: 'COMPLETE_ONBOARDING' }
   | { type: 'CLEAR_STREAK_IGNITED' }
+  | { type: 'SET_CEFR_LEVEL'; level: CEFRLevel }
   | { type: 'HYDRATE'; state: UserState };
 
 function xpToLevel(xp: number): number {
@@ -92,6 +96,7 @@ const INITIAL_STATE: UserState = {
   newBadge: null,
   onboardingComplete: false,
   streakIgnited: false,
+  cefrLevel: 'A1',
 };
 
 function buildBadgeStats(state: UserState): BadgeStats {
@@ -206,6 +211,9 @@ export function userReducer(state: UserState, action: Action): UserState {
 
     case 'CLEAR_STREAK_IGNITED':
       return { ...state, streakIgnited: false };
+
+    case 'SET_CEFR_LEVEL':
+      return { ...state, cefrLevel: action.level };
 
     default:
       return state;
