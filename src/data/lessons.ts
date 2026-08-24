@@ -853,6 +853,59 @@ export const LESSONS: Lesson[] = [
         ],
         maxScore: 20,
       },
+      {
+        id: 'grammar-gender-3',
+        title: 'Le pluriel des noms',
+        intro: 'Le genre ne détermine pas seulement les accords : il fixe aussi la terminaison du pluriel. Une fois le genre connu, la règle du pluriel devient presque automatique.',
+        sections: [
+          {
+            heading: 'La règle générale par genre',
+            body: 'Masculin et féminin partagent la même logique de pluriel (-ы/-и), tandis que le neutre a ses propres terminaisons (-а/-я).',
+            table: {
+              headers: ['Genre', 'Singulier', 'Pluriel', 'Règle'],
+              rows: [
+                ['Masculin', 'стол', 'столы', 'consonne dure → -ы'],
+                ['Masculin', 'словарь', 'словари', 'consonne molle/-ь → -и'],
+                ['Féminin', 'книга', 'книги', '-а → -ы'],
+                ['Féminin', 'земля', 'земли', '-я → -и'],
+                ['Neutre', 'окно', 'окна', '-о → -а'],
+                ['Neutre', 'море', 'моря', '-е → -я'],
+              ],
+            },
+          },
+          {
+            heading: "L'exception orthographique : après г, к, х, ж, ш, щ, ч",
+            body: 'Après ces sept lettres, l\'orthographe russe interdit d\'écrire -ы : on écrit toujours -и à la place, même pour un nom normalement "dur".',
+            examples: [
+              { ru: 'книга → книги', translit: 'kniga → knigi', fr: 'livre → livres (к interdit -ы)' },
+              { ru: 'подруга → подруги', translit: 'padrouga → padrougi', fr: 'amie → amies (г interdit -ы)' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'gr-e8', type: 'mcq',
+            question: 'Quel est le pluriel de "стол" (table) ?',
+            options: ['столи', 'столы', 'стола'],
+            correct: 1,
+            explanation: 'Masculin en consonne dure → pluriel en -ы : столы.',
+          },
+          {
+            id: 'gr-e9', type: 'mcq',
+            question: 'Quel est le pluriel de "окно" (fenêtre) ?',
+            options: ['окны', 'окна', 'окни'],
+            correct: 1,
+            explanation: 'Neutre en -о → pluriel en -а : окна.',
+          },
+          {
+            id: 'gr-e10', type: 'fill',
+            question: 'Le pluriel de "книга" (livre) est ___ (après к, -ы est interdit)',
+            correct: 'книги',
+            hint: 'Après к, on écrit toujours -и, jamais -ы',
+          },
+        ],
+        maxScore: 20,
+      },
     ],
   },
   {
@@ -946,6 +999,59 @@ export const LESSONS: Lesson[] = [
             question: '"Я читаю ___ " (Je lis un livre). Mettez книга à l\'accusatif.',
             correct: 'книгу',
             hint: 'Féminin -а → accusatif -у',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-cases-3',
+        title: 'Куда ? — la direction avec в et на',
+        intro: 'Les prépositions в (dans) et на (sur) changent de cas selon la question posée : accusatif si on répond à "куда ?" (vers où ?), prépositionnel si on répond à "где ?" (où, sans mouvement). C\'est l\'un des réflexes les plus utiles à acquérir en A1.',
+        sections: [
+          {
+            heading: 'Le test de la flèche',
+            body: 'Avant de choisir le cas, posez-vous la question : y a-t-il un mouvement, une direction, comme une flèche qui pointe vers un lieu ? Si le verbe évoque aller, envoyer, mettre, jeter → accusatif (куда ?). Si le verbe évoque être, vivre, travailler, se trouver → prépositionnel (где ?), qui sera vu dans une prochaine leçon.',
+            table: {
+              headers: ['Question', 'Cas', 'Exemple', 'Traduction'],
+              rows: [
+                ['Куда ? (vers où)', 'Accusatif', 'Я иду́ в шко́лу.', 'Je vais à l\'école (mouvement).'],
+                ['Где ? (où)', 'Prépositionnel', 'Я в шко́ле.', 'Je suis à l\'école (état).'],
+              ],
+            },
+          },
+          {
+            heading: 'Choisir entre в et на',
+            body: 'В (dans) s\'utilise pour les espaces fermés, pays, villes, bâtiments. На (sur) s\'utilise pour les espaces ouverts, événements, certaines institutions figées par l\'usage — cette dernière catégorie se mémorise par cœur, mot par mot.',
+            table: {
+              headers: ['Préposition', 'Type de lieu', 'Exemples'],
+              rows: [
+                ['в + accusatif', 'Espace fermé, pays, ville', 'в Росси́ю, в шко́лу, в дом'],
+                ['на + accusatif', 'Espace ouvert, événement', 'на у́лицу, на конце́рт, на рабо́ту'],
+              ],
+            },
+          },
+        ],
+        exercises: [
+          {
+            id: 'cas-e6', type: 'mcq',
+            question: '"Я иду в школу" répond à quelle question ?',
+            options: ['Где ? (où)', 'Куда ? (vers où)', 'Когда ? (quand)'],
+            correct: 1,
+            explanation: 'иду (je vais) exprime un mouvement → куда ? → accusatif.',
+          },
+          {
+            id: 'cas-e7', type: 'mcq',
+            question: 'Quelle préposition pour "aller au concert" (на/в + événement) ?',
+            options: ['в концерт', 'на концерт', 'у концерт'],
+            correct: 1,
+            explanation: 'Les événements comme concert prennent на : идти на концерт.',
+          },
+          {
+            id: 'cas-e8', type: 'mcq',
+            question: 'Quel indice signale qu\'il faut l\'accusatif plutôt que le prépositionnel ?',
+            options: ['Un verbe d\'état (être, vivre)', 'Un verbe de mouvement (aller, envoyer)', 'La longueur du mot'],
+            correct: 1,
+            explanation: 'Mouvement = accusatif (куда ?) ; état = prépositionnel (где ?).',
           },
         ],
         maxScore: 20,
@@ -1073,6 +1179,62 @@ export const LESSONS: Lesson[] = [
             options: ['-ю', '-ешь', '-ет', '-ем'],
             correct: 1,
             explanation: 'ты читаешь — la terminaison -ешь est typique de "tu" au présent.',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-verbs-3',
+        title: 'Les verbes réfléchis (-ся)',
+        intro: 'Beaucoup de verbes russes très courants portent un petit suffixe -ся (ou -сь après voyelle) collé à la fin. C\'est une trace historique du pronom "себя" (soi-même) à l\'accusatif — comme "se laver" en français.',
+        sections: [
+          {
+            heading: 'Comment ça se conjugue',
+            body: 'Le suffixe -ся se colle TOUJOURS après la terminaison personnelle habituelle, jamais avant. Le verbe se conjugue normalement, puis on ajoute -ся (après consonne) ou -сь (après voyelle).',
+            table: {
+              headers: ['Personne', 'заниматься (étudier)', 'Explication'],
+              rows: [
+                ['я', 'занимаюсь', '-ю + сь (après voyelle)'],
+                ['ты', 'занимаешься', '-ешь + ся (après consonne)'],
+                ['он/она', 'занимается', '-ет + ся'],
+                ['мы', 'занимаемся', '-ем + ся'],
+              ],
+            },
+          },
+          {
+            heading: 'Trois usages différents',
+            body: 'Le -ся ne veut pas toujours dire "à soi-même" : il a trois emplois principaux, et pour beaucoup de verbes, il faut simplement apprendre la forme en -ся comme un mot à part entière.',
+            table: {
+              headers: ['Usage', 'Exemple', 'Sens'],
+              rows: [
+                ['Vraiment réfléchi', 'мыться', 'se laver (soi-même)'],
+                ['Réciproque', 'видеться', 'se voir (l\'un l\'autre)'],
+                ['Sens propre, sans réflexivité réelle', 'учиться, заниматься', 'étudier — le -ся fait juste partie du verbe'],
+              ],
+            },
+          },
+        ],
+        exercises: [
+          {
+            id: 'vb-e7', type: 'mcq',
+            question: 'Où se place -ся dans la conjugaison ?',
+            options: ['Avant la terminaison personnelle', 'Toujours après la terminaison personnelle', 'Il remplace la terminaison'],
+            correct: 1,
+            explanation: 'On conjugue normalement le verbe, puis on ajoute -ся (ou -сь après voyelle) à la fin.',
+          },
+          {
+            id: 'vb-e8', type: 'mcq',
+            question: 'Après quel type de son écrit-on -сь plutôt que -ся ?',
+            options: ['Après une consonne', 'Après une voyelle', 'Jamais, c\'est toujours -ся'],
+            correct: 1,
+            explanation: 'занимаю + сь (voyelle) mais занимаешь + ся (consonne).',
+          },
+          {
+            id: 'vb-e9', type: 'mcq',
+            question: '"учиться" (étudier) est un exemple de verbe en -ся dont l\'usage est :',
+            options: ['Purement réfléchi (à soi-même)', 'Réciproque (l\'un l\'autre)', 'Un sens propre, à apprendre comme un mot entier'],
+            correct: 2,
+            explanation: 'Pour учиться, заниматься et bien d\'autres, -ся ne se traduit pas littéralement — c\'est le verbe complet à mémoriser tel quel.',
           },
         ],
         maxScore: 20,
@@ -1231,6 +1393,62 @@ export const LESSONS: Lesson[] = [
             options: ['Nominatif singulier', 'Génitif singulier', 'Génitif pluriel', 'Accusatif'],
             correct: 2,
             explanation: '"5" et plus → génitif pluriel : столов.',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'numbers-cardinal-3',
+        title: 'Nombres ordinaux et dire son âge',
+        intro: 'Après les nombres cardinaux (un, deux, trois...), place aux ordinaux (premier, deuxième, troisième...) — et à une phrase indispensable dès la première conversation : dire son âge.',
+        sections: [
+          {
+            heading: 'Les nombres ordinaux',
+            body: 'Les ordinaux se comportent comme des adjectifs : ils s\'accordent en genre, nombre et cas avec le nom qu\'ils qualifient. Premier, deuxième et troisième sont irréguliers et à mémoriser en priorité.',
+            table: {
+              headers: ['Cardinal', 'Ordinal (masc.)', 'Traduction'],
+              rows: [
+                ['один', 'пе́рвый', 'premier'],
+                ['два', 'второ́й', 'deuxième'],
+                ['три', 'тре́тий', 'troisième'],
+                ['четыре', 'четвёртый', 'quatrième'],
+                ['пять', 'пя́тый', 'cinquième'],
+              ],
+            },
+          },
+          {
+            heading: 'Dire son âge : Мне ... лет',
+            body: 'Pour donner son âge, le russe utilise le datif du pronom (мне = à moi) suivi du nombre, puis d\'un mot pour "année" qui suit exactement la même règle d\'accord que столов vue plus haut : год après 1, года après 2/3/4, лет après 5 et plus.',
+            table: {
+              headers: ['Âge', 'Phrase complète', 'Mot "année" utilisé'],
+              rows: [
+                ['21 ans', 'Мне два́дцать оди́н год.', 'год (comme "1")'],
+                ['32 ans', 'Мне три́дцать два го́да.', 'года (comme "2-4")'],
+                ['50 ans', 'Мне пятьдеся́т лет.', 'лет (comme "5+")'],
+              ],
+            },
+          },
+        ],
+        exercises: [
+          {
+            id: 'num-e9', type: 'mcq',
+            question: 'Comment dit-on "premier" en russe ?',
+            options: ['одинный', 'первый', 'один'],
+            correct: 1,
+            explanation: 'первый = premier ; c\'est un ordinal irrégulier à mémoriser.',
+          },
+          {
+            id: 'num-e10', type: 'fill',
+            question: '"Mне двадцать один ___" (J\'ai 21 ans) — quel mot pour "année" ?',
+            correct: 'год',
+            hint: 'Comme après "1" pour стол → un стол, un ___',
+          },
+          {
+            id: 'num-e11', type: 'mcq',
+            question: 'Quel mot pour "année" après "50" (comme après 5 et plus) ?',
+            options: ['год', 'года', 'лет'],
+            correct: 2,
+            explanation: '"5" et plus → génitif pluriel : лет, exactement comme столов pour стол.',
           },
         ],
         maxScore: 20,
