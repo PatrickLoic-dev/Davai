@@ -1739,4 +1739,259 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'grammar-instrumental',
+    title: "L'instrumental",
+    titleRu: 'Творительный падеж',
+    module: 'grammar',
+    level: 'A2',
+    order: 3,
+    prerequisites: ['grammar-dative'],
+    subLessons: [
+      {
+        id: 'grammar-instrumental-1',
+        title: "Le moyen et l'accompagnement",
+        intro: 'L\'instrumental répond à la question « avec quoi ? / avec qui ? ». Son nom vient de son usage le plus intuitif : désigner l\'instrument, le moyen par lequel une action se fait.',
+        sections: [
+          {
+            heading: "Terminaisons de l'instrumental singulier",
+            body: 'Deux terminaisons à connaître, selon que la consonne finale du radical est dure ou molle.',
+            table: {
+              headers: ['Nominatif', 'Genre', 'Instrumental singulier', 'Règle'],
+              rows: [
+                ['стол', 'Masculin', 'столом', '+ ом'],
+                ['музей', 'Masculin (-й)', 'музеем', '+ ем'],
+                ['окно', 'Neutre', 'окном', '-о → -ом'],
+                ['мама', 'Féminin (-а)', 'мамой', '-а → -ой'],
+                ['неделя', 'Féminin (-я)', 'неделей', '-я → -ей'],
+              ],
+            },
+          },
+          {
+            heading: 'Le moyen, sans préposition',
+            body: 'Pour dire "avec quel outil" on fait une action, le russe met simplement le nom à l\'instrumental — sans aucune préposition, contrairement au français qui dit toujours "avec".',
+            examples: [
+              { ru: 'Я пишу ручкой.', translit: 'Ya pichou routchkoy.', fr: "J'écris avec un stylo. (littéralement : j'écris stylo-instrumental)" },
+              { ru: 'Мы едем поездом.', translit: 'My yedyem poyezdam.', fr: 'Nous voyageons en train.' },
+            ],
+          },
+          {
+            heading: "L'accompagnement : с + instrumental",
+            body: 'Pour "avec quelqu\'un" (accompagnement), en revanche, on utilise la préposition с (avec) + instrumental. с devient со devant deux consonnes qui rendraient la prononciation difficile.',
+            examples: [
+              { ru: 'Я иду с другом.', translit: 'Ya idou s drougam.', fr: "Je vais avec un ami." },
+              { ru: 'Чай с молоком.', translit: 'Tchay s malakom.', fr: 'Thé avec du lait.' },
+              { ru: 'Мы со мной.', translit: 'My sa mnoy.', fr: 'Nous — avec moi (со devant deux consonnes).' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'ins-e1', type: 'mcq',
+            question: '« J\'écris avec un stylo » — quelle forme pour "ручка" ?',
+            options: ['ручка', 'ручку', 'ручкой'],
+            correct: 2,
+            explanation: 'Le moyen se met à l\'instrumental sans préposition : ручкой.',
+          },
+          {
+            id: 'ins-e2', type: 'mcq',
+            question: 'Pour dire « avec un ami » (accompagnement), on utilise :',
+            options: ['другом (sans préposition)', 'с другом', 'для друга'],
+            correct: 1,
+            explanation: 'L\'accompagnement d\'une personne exige la préposition с + instrumental.',
+          },
+          {
+            id: 'ins-e3', type: 'fill',
+            question: 'Mettez "стол" à l\'instrumental singulier : ___',
+            correct: 'столом',
+            hint: 'Masculin → + ом',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-instrumental-2',
+        title: 'La profession : кем ты работаешь ?',
+        intro: 'Second usage caractéristique de l\'instrumental : exprimer une profession ou un état temporaire avec быть (être), стать (devenir) et работать (travailler comme).',
+        sections: [
+          {
+            heading: 'работать + instrumental',
+            body: 'Pour dire son métier, le russe utilise работать suivi directement du nom de la profession à l\'instrumental — jamais au nominatif.',
+            examples: [
+              { ru: 'Я работаю учителем.', translit: 'Ya rabotayou outchityelyem.', fr: "Je travaille comme professeur." },
+              { ru: 'Она работает врачом.', translit: 'Ana rabotayet vrachom.', fr: 'Elle travaille comme médecin.' },
+              { ru: 'Мы работаем программистами.', translit: 'My rabotayem pragrammistami.', fr: 'Nous travaillons comme informaticiens.' },
+            ],
+          },
+          {
+            heading: 'стать + instrumental : devenir',
+            body: 'Même logique avec "devenir" : la nouvelle profession ou le nouvel état se met à l\'instrumental.',
+            examples: [
+              { ru: 'Он станет учителем.', translit: 'On stanyet outchityelyem.', fr: 'Il deviendra professeur.' },
+            ],
+          },
+          {
+            heading: 'Question : кем ?',
+            body: 'Le mot interrogatif pour "qui" à l\'instrumental est кем — à ne pas confondre avec кто (nominatif) ou кого (accusatif/génitif).',
+            examples: [
+              { ru: 'Кем ты работаешь?', translit: 'Kyem ty rabotayesh\'?', fr: 'Tu travailles comme quoi ? (littéralement : en tant que qui ?)' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'ins-e4', type: 'mcq',
+            question: '« Je travaille comme professeur » (учитель) se dit :',
+            options: ['Я работаю учитель', 'Я работаю учителем', 'Я работаю учителя'],
+            correct: 1,
+            explanation: 'работать + profession à l\'instrumental : учителем.',
+          },
+          {
+            id: 'ins-e5', type: 'mcq',
+            question: 'Quel est le mot interrogatif pour "qui" à l\'instrumental ?',
+            options: ['кто', 'кого', 'кем'],
+            correct: 2,
+            explanation: 'кем ты работаешь ? = en tant que qui travailles-tu ?',
+          },
+          {
+            id: 'ins-e6', type: 'match',
+            question: 'Associez chaque verbe à son sens.',
+            pairs: [
+              { left: 'работать', right: 'travailler comme' },
+              { left: 'стать', right: 'devenir' },
+              { left: 'быть', right: 'être' },
+            ],
+          },
+        ],
+        maxScore: 20,
+      },
+    ],
+  },
+  {
+    id: 'grammar-prepositional',
+    title: 'Le prépositionnel',
+    titleRu: 'Предложный падеж',
+    module: 'grammar',
+    level: 'A2',
+    order: 4,
+    prerequisites: ['grammar-instrumental'],
+    subLessons: [
+      {
+        id: 'grammar-prepositional-1',
+        title: 'Где ? — la localisation',
+        intro: 'Le prépositionnel doit son nom au fait qu\'il n\'apparaît JAMAIS sans préposition — c\'est le seul cas russe dans ce cas. On le retrouve pour répondre à « где ? » (où ?), complétant enfin le куда/где vu en A1.',
+        sections: [
+          {
+            heading: 'Terminaisons : le cas le plus régulier',
+            body: 'Bonne nouvelle : le prépositionnel est le cas aux terminaisons les plus prévisibles. La grande majorité des noms prennent simplement -е au singulier.',
+            table: {
+              headers: ['Nominatif', 'Genre', 'Prépositionnel', 'Règle'],
+              rows: [
+                ['стол', 'Masculin', 'столе', '+ е'],
+                ['окно', 'Neutre', 'окне', '-о → -е'],
+                ['мама', 'Féminin (-а)', 'маме', '-а → -е'],
+                ['Мария', 'Féminin (-ия)', 'Марии', '-ия → -ии (exception)'],
+              ],
+            },
+          },
+          {
+            heading: 'Le duo в / на, enfin complet',
+            body: 'Vous connaissez déjà в et на à l\'accusatif pour le mouvement (куда ?). Les mêmes prépositions, suivies cette fois du prépositionnel, répondent à « où ? » (где ?) — sans aucun mouvement.',
+            table: {
+              headers: ['Question', 'Cas', 'Exemple'],
+              rows: [
+                ['Куда ? (déjà vu en A1)', 'Accusatif', 'Я иду в школу. (Je vais à l\'école.)'],
+                ['Где ? (nouveau)', 'Prépositionnel', 'Я в школе. (Je suis à l\'école.)'],
+              ],
+            },
+          },
+          {
+            heading: 'Exception : la finale -у pour quelques lieux',
+            body: 'Une petite liste de mots masculins très fréquents utilisent -у (accentué) au lieu de -е, mais uniquement quand ils indiquent un lieu.',
+            examples: [
+              { ru: 'в саду', translit: 'v sadou', fr: 'dans le jardin (pas "в саде")' },
+              { ru: 'в лесу', translit: 'v lyesou', fr: 'dans la forêt' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'prep-e1', type: 'mcq',
+            question: '« Je suis à l\'école » (état, pas mouvement) se dit :',
+            options: ['Я иду в школу', 'Я в школе', 'Я в школу'],
+            correct: 1,
+            explanation: 'где ? (état) → в + prépositionnel : в школе.',
+          },
+          {
+            id: 'prep-e2', type: 'mcq',
+            question: 'Quel cas suit toujours une préposition en russe, sans exception ?',
+            options: ['Le génitif', 'Le prépositionnel', "L'accusatif"],
+            correct: 1,
+            explanation: 'Le prépositionnel tire son nom du fait qu\'il n\'existe jamais sans préposition.',
+          },
+          {
+            id: 'prep-e3', type: 'fill',
+            question: 'Mettez "стол" au prépositionnel : на ___ (sur la table)',
+            correct: 'столе',
+            hint: 'Masculin → + е',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-prepositional-2',
+        title: 'О чём ? — parler de quelque chose',
+        intro: 'Second grand usage du prépositionnel : introduire le sujet dont on parle, pense ou rêve, avec la préposition о (ou ses variantes об / обо).',
+        sections: [
+          {
+            heading: 'о, об, обо : trois formes, une seule préposition',
+            body: 'о devient об devant une voyelle, et obo (rare) devant certains groupes consonantiques difficiles à prononcer — uniquement pour faciliter l\'oral.',
+            table: {
+              headers: ['Forme', 'Contexte', 'Exemple'],
+              rows: [
+                ['о', 'devant consonne', 'о России (à propos de la Russie)'],
+                ['об', 'devant voyelle', 'об этом (à propos de ça)'],
+                ['обо', 'cas particuliers (мне)', 'обо мне (à propos de moi)'],
+              ],
+            },
+          },
+          {
+            heading: 'Les verbes qui l\'appellent',
+            body: 'думать (penser), говорить (parler), мечтать (rêver), знать (savoir) — tous introduisent leur sujet de pensée avec о + prépositionnel.',
+            examples: [
+              { ru: 'Я думаю о тебе.', translit: 'Ya doumayou a tyebye.', fr: 'Je pense à toi.' },
+              { ru: 'Мы говорим о фильме.', translit: 'My gavarim a fil\'mye.', fr: 'Nous parlons du film.' },
+              { ru: 'Она мечтает о путешествии.', translit: 'Ana myetchtayet a poutyeshestvii.', fr: 'Elle rêve d\'un voyage.' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'prep-e4', type: 'mcq',
+            question: 'Quelle forme utiliser devant une voyelle : о или об ?',
+            options: ['о', 'об'],
+            correct: 1,
+            explanation: 'об remplace о devant une voyelle : об этом.',
+          },
+          {
+            id: 'prep-e5', type: 'mcq',
+            question: '« Je pense à toi » se traduit par :',
+            options: ['Я думаю ты', 'Я думаю о тебе', 'Я думаю тебя'],
+            correct: 1,
+            explanation: 'думать о + prépositionnel : о тебе.',
+          },
+          {
+            id: 'prep-e6', type: 'match',
+            question: 'Associez chaque verbe à son sens.',
+            pairs: [
+              { left: 'думать', right: 'penser' },
+              { left: 'говорить', right: 'parler' },
+              { left: 'мечтать', right: 'rêver' },
+            ],
+          },
+        ],
+        maxScore: 20,
+      },
+    ],
+  },
 ];
