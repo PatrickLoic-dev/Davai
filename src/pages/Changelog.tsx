@@ -15,6 +15,35 @@ const TAG_COLOR: Record<Entry['tag'], string> = {
 
 const ENTRIES: Entry[] = [
   {
+    version: '1.3.0',
+    date: '24 août 2026',
+    tag: 'Nouveau',
+    items: [
+      "Application installable (PWA) : Davai peut désormais s'installer comme une vraie app sur mobile et desktop, avec fonctionnement hors-ligne partiel et connexion persistante — l'app rouvre directement sur le tableau de bord si vous êtes déjà connecté.",
+      "Test de positionnement repensé : 30 questions couvrant les niveaux A1 à C2, pour vous attribuer un niveau CEFR précis dès l'inscription (ou démarrer en A1 si vous le passez).",
+      "Possibilité de changer de parcours de niveau à tout moment (ex. passer de A1 à B1) en repassant un test, sans perdre votre progression.",
+      "Leçons restructurées en sous-leçons, chacune avec sa propre évaluation notée sur 20 ou 30, et présentées sous forme de timeline.",
+      "Alphabet cyrillique réorganisé à la française : voyelles, consonnes, semi-voyelles et signes enseignés comme des catégories grammaticales distinctes, avec exemples d'usage.",
+      "Nouvelle leçon sur les syllabes communes et la prononciation, incluant l'accentuation et l'assourdissement final.",
+      "Programme complet du niveau A2 : génitif, datif, instrumental, prépositionnel, récapitulatif des prépositions par cas, et introduction à l'aspect verbal (perfectif/imperfectif).",
+      "Interface d'apprentissage en stepper : chaque sous-leçon se découpe en petites étapes digestibles plutôt qu'un long défilement.",
+      "Survol des mots russes : les termes soulignés en pointillé affichent au survol la phonétique et un bouton audio.",
+      "Prononciation audio migrée vers un moteur de synthèse vocale cloud (ElevenLabs), avec mise en cache permanente — fini les voix robotiques ou silencieuses du navigateur.",
+      "Liens GitHub, X et Buy Me a Coffee ajoutés au pied de page.",
+    ],
+  },
+  {
+    version: '1.2.1',
+    date: '23 août 2026',
+    tag: 'Corrigé',
+    items: [
+      "Le flambeau de streak s'allumait à tort juste après le test de positionnement — il ne se déclenche désormais que sur une vraie activité d'apprentissage (leçon ou révision).",
+      "Un streak non entretenu retombe maintenant correctement à zéro après un jour d'inactivité, au lieu de rester figé indéfiniment.",
+      "Les badges ne peuvent plus être obtenus en terminant seulement le test de positionnement : ils exigent désormais l'achèvement réel de leçons.",
+      "Accès aux Paramètres et au profil réparé sur mobile (l'onglet manquait dans la barre de navigation basse) et apparence du tableau de bord optimisée pour petits écrans.",
+    ],
+  },
+  {
     version: '1.2.0',
     date: '22 août 2026',
     tag: 'Corrigé',
