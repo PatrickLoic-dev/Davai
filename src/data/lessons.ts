@@ -244,6 +244,13 @@ export const LESSONS: Lesson[] = [
               { ru: 'мять', translit: "myat'", fr: 'froisser (м mouillé)' },
             ],
           },
+          {
+            heading: 'Le geste articulatoire : un seul son fondu',
+            body: 'Une consonne mouillée n\'est pas "consonne + son y" mis bout à bout — c\'est un seul son fondu, où le milieu de la langue touche le palais en même temps que vous prononcez la consonne. Astuce pratique : souriez légèrement et laissez échapper un petit "ih" en même temps que la consonne — c\'est exactement ce geste qui produit le son mouillé.',
+            examples: [
+              { ru: 'зеркало', translit: "zyerkala", fr: 'miroir — seul le з est mouillé, car suivi de е' },
+            ],
+          },
         ],
         exercises: [
           {
@@ -259,6 +266,13 @@ export const LESSONS: Lesson[] = [
             options: ['Plus dure', 'Mouillée (palatalisée)', 'Muette', 'Nasale'],
             correct: 1,
             explanation: 'Les voyelles douces palatalisent systématiquement la consonne qui les précède.',
+          },
+          {
+            id: 'syl-e7', type: 'mcq',
+            question: 'Une consonne "mouillée" est en réalité :',
+            options: ['Une consonne suivie d\'un son "y" séparé', 'Un seul son fondu, langue relevée vers le palais', 'Une consonne prononcée deux fois'],
+            correct: 1,
+            explanation: 'La palatalisation est un geste simultané, pas deux sons l\'un après l\'autre.',
           },
           {
             id: 'syl-e3', type: 'match',
@@ -300,6 +314,17 @@ export const LESSONS: Lesson[] = [
                 ['са', 'ся', 'сам / сядь (assieds-toi)'],
                 ['ту', 'тю', 'тут / тюльпан (tulipe)'],
                 ['лу', 'лю', 'лук (oignon) / люблю (j\'aime)'],
+              ],
+            },
+          },
+          {
+            heading: 'Les exceptions à connaître',
+            body: 'Trois consonnes sont toujours dures, quoi qu\'il arrive : ж, ш, ц (même suivies de и, qui se prononce alors "ы" !). Trois autres sont toujours douces : ч, щ, й — impossible de les durcir, même devant а, о ou у.',
+            table: {
+              headers: ['Consonne', 'Toujours', 'Piège fréquent'],
+              rows: [
+                ['ж, ш, ц', 'Dures', 'жи, ши se lisent "жы", "шы" — jamais "ji", "chi"'],
+                ['ч, щ, й', 'Douces', 'ча, ща se lisent quand même "тча", "щя" mouillés'],
               ],
             },
           },
@@ -357,6 +382,13 @@ export const LESSONS: Lesson[] = [
               { ru: 'ты', translit: 'ty', fr: 'tu' },
             ],
           },
+          {
+            heading: 'Astuce physique pour le sentir',
+            body: 'Prenez un crayon (ou votre doigt) et mordez-le doucement en écartant les commissures des lèvres au maximum, comme un grand sourire forcé. Dans cette position, prononcez "i" : c\'est exactement le son Ы. Autre méthode : dites "tee", puis reculez la langue sans arrondir les lèvres — vous passez alors de и à ы.',
+            examples: [
+              { ru: 'мы / ми', translit: "my / mi", fr: 'nous (ы, langue reculée) vs la note "mi" (и, langue avancée)' },
+            ],
+          },
         ],
         exercises: [
           {
@@ -371,6 +403,13 @@ export const LESSONS: Lesson[] = [
             question: 'Le mot "мы" (nous) contient la voyelle spéciale ___',
             correct: 'ы',
             hint: 'C\'est la voyelle du fond',
+          },
+          {
+            id: 'ph-e5', type: 'mcq',
+            question: 'Dans la paire мы/ми, qu\'est-ce qui change entre les deux ?',
+            options: ['La position de la langue (arrière pour ы, avant pour и)', 'Le volume de la voix', 'Rien, c\'est le même son'],
+            correct: 0,
+            explanation: 'ы = langue reculée (son "dark"), и = langue avancée (son "bright").',
           },
         ],
         maxScore: 20,
@@ -388,6 +427,18 @@ export const LESSONS: Lesson[] = [
               { ru: 'день', translit: "den'", fr: 'jour' },
               { ru: 'пять', translit: "pyat'", fr: 'cinq' },
             ],
+          },
+          {
+            heading: 'Le sens change tout : paires minimales',
+            body: 'Le signe mou n\'est pas un détail cosmétique : il peut changer complètement le sens d\'un mot. Comparez ces paires — seule la présence du Ь les distingue :',
+            table: {
+              headers: ['Sans Ь', 'Avec Ь', 'Différence de sens'],
+              rows: [
+                ['мат (mat)', 'мать (mat\')', '"juron / mat (échecs)" vs "mère"'],
+                ['брат (brat)', 'брать (brat\')', '"frère" vs "prendre" (infinitif)'],
+                ['нос (nos)', 'нёс (nyos)', '"nez" vs "il portait" (avec ё, aussi mouillé)'],
+              ],
+            },
           },
           {
             heading: 'Ъ — le signe dur',
@@ -439,7 +490,7 @@ export const LESSONS: Lesson[] = [
         sections: [
           {
             heading: 'La règle des terminaisons',
-            body: 'Regardez la dernière lettre du nom :',
+            body: '90% des noms russes révèlent leur genre au premier coup d\'œil. Regardez simplement la dernière lettre :',
             table: {
               headers: ['Terminaison', 'Genre', 'Exemple', 'Traduction'],
               rows: [
@@ -450,6 +501,23 @@ export const LESSONS: Lesson[] = [
               ],
             },
           },
+          {
+            heading: 'Les 10% à part : le piège du -ь',
+            body: 'Environ 10% des noms se terminent par -ь, et là, aucune règle visuelle ne fonctionne : la graphie est identique pour le masculin et le féminin. Statistiquement, environ 78% de ces mots sont féminins et 22% masculins — mais il faut les mémoriser un par un, souvent en apprenant le mot avec son adjectif ("моя тетрадь" / "мой словарь").',
+            examples: [
+              { ru: 'словарь (м)', translit: 'slavár\'', fr: 'dictionnaire — masculin malgré le -ь' },
+              { ru: 'тетрадь (ж)', translit: "tyetrád'", fr: 'cahier — féminin' },
+              { ru: 'дверь (ж)', translit: "dvyer'", fr: 'porte — féminin' },
+            ],
+          },
+          {
+            heading: 'Le genre naturel gagne toujours',
+            body: 'Pour les noms de personnes, le sexe réel de la personne l\'emporte sur la terminaison. Ainsi папа (papa), дедушка (grand-père) et дядя (oncle) se terminent en -а/-я comme des mots féminins... mais restent grammaticalement masculins, car ils désignent des hommes.',
+            examples: [
+              { ru: 'мой папа', translit: 'moy papa', fr: 'mon papa (masculin, malgré le -а)' },
+              { ru: 'наш дедушка', translit: 'nash dyedushka', fr: 'notre grand-père (masculin)' },
+            ],
+          },
         ],
         exercises: [
           {
@@ -458,6 +526,13 @@ export const LESSONS: Lesson[] = [
             options: ['Masculin', 'Féminin', 'Neutre', 'Impossible à savoir'],
             correct: 0,
             explanation: 'стол se termine par une consonne → masculin.',
+          },
+          {
+            id: 'gr-e7', type: 'mcq',
+            question: 'Quel est le genre de "папа" (papa) ?',
+            options: ['Masculin (genre naturel)', 'Féminin (à cause du -а)', 'Neutre'],
+            correct: 0,
+            explanation: 'Le sexe réel de la personne l\'emporte : папа désigne un homme, donc masculin malgré le -а.',
           },
           {
             id: 'gr-e2', type: 'mcq',
@@ -573,6 +648,18 @@ export const LESSONS: Lesson[] = [
               ],
             },
           },
+          {
+            heading: "Le piège n°1 : le masculin animé",
+            body: "Règle capitale, source de la majorité des erreurs de débutants : quand le nom masculin désigne un être vivant (personne ou animal), l'accusatif ne reste PAS identique au nominatif — il emprunte la terminaison du génitif, en -а/-я.",
+            table: {
+              headers: ['Nominatif', 'Accusatif (animé)', 'Exemple'],
+              rows: [
+                ['брат (frère)', 'брата', 'Я вижу брата.'],
+                ['кот (chat)', 'кота', 'Я вижу кота.'],
+                ['студент (étudiant)', 'студента', 'Я знаю студента.'],
+              ],
+            },
+          },
         ],
         exercises: [
           {
@@ -581,6 +668,13 @@ export const LESSONS: Lesson[] = [
             options: ['Nominatif', 'Accusatif', 'Génitif', 'Datif'],
             correct: 1,
             explanation: 'книгу est l\'objet direct de "voir" → accusatif féminin (книга → книгу).',
+          },
+          {
+            id: 'cas-e5', type: 'mcq',
+            question: 'Comment dit-on "Je vois mon frère" (брат) à l\'accusatif ?',
+            options: ['Я вижу брат', 'Я вижу брата', 'Я вижу брату'],
+            correct: 1,
+            explanation: 'брат est masculin animé → l\'accusatif prend la terminaison du génitif : брата.',
           },
           {
             id: 'cas-e2', type: 'mcq',
@@ -629,6 +723,18 @@ export const LESSONS: Lesson[] = [
               ],
             },
           },
+          {
+            heading: 'Attention aux mutations consonantiques',
+            body: 'Certains verbes changent une consonne de leur radical au présent — et ce changement se maintient à toutes les personnes. Avec писать (écrire), le с du radical devient ш dès la 1ère personne, et le reste jusqu\'à "ils".',
+            table: {
+              headers: ['Personne', 'писать (écrire)', 'Explication'],
+              rows: [
+                ['я', 'пишу', 'с → ш (mutation)'],
+                ['ты', 'пишешь', 'la mutation persiste'],
+                ['они', 'пишут', 'toujours ш'],
+              ],
+            },
+          },
         ],
         exercises: [
           {
@@ -637,6 +743,13 @@ export const LESSONS: Lesson[] = [
             options: ['читаю', 'читают', 'читает', 'читаем'],
             correct: 1,
             explanation: 'они → читают. La terminaison -ют est caractéristique de la 3e personne du pluriel.',
+          },
+          {
+            id: 'vb-e5', type: 'mcq',
+            question: 'Comment dit-on "j\'écris" (писать) ?',
+            options: ['я писаю', 'я пишу', 'я писают'],
+            correct: 1,
+            explanation: 'писать subit une mutation с→ш dès "я" : пишу (pas "писаю").',
           },
           {
             id: 'vb-e3', type: 'mcq',
@@ -668,6 +781,19 @@ export const LESSONS: Lesson[] = [
               ],
             },
           },
+          {
+            heading: 'Le verbe le plus irrégulier : хотеть (vouloir)',
+            body: 'хотеть est célèbre pour son irrégularité : il se conjugue comme la 1ère conjugaison au singulier, puis bascule sur la 2e conjugaison au pluriel — un mélange unique à mémoriser par cœur, tant il est utilisé au quotidien.',
+            table: {
+              headers: ['Personne', 'хотеть (vouloir)', 'Groupe'],
+              rows: [
+                ['я', 'хочу', '1ère conjugaison'],
+                ['ты', 'хочешь', '1ère conjugaison'],
+                ['мы', 'хотим', '2e conjugaison'],
+                ['они', 'хотят', '2e conjugaison'],
+              ],
+            },
+          },
         ],
         exercises: [
           {
@@ -675,6 +801,13 @@ export const LESSONS: Lesson[] = [
             question: 'Я ___ по-русски. (Je parle russe.) — Conjuguez "говорить" pour я.',
             correct: 'говорю',
             hint: 'Conjugaison 2 : я → -ю',
+          },
+          {
+            id: 'vb-e6', type: 'mcq',
+            question: 'Comment dit-on "nous voulons" (хотеть) ?',
+            options: ['мы хочем', 'мы хотим', 'мы хочут'],
+            correct: 1,
+            explanation: 'хотеть bascule sur la 2e conjugaison au pluriel : хотим (pas "хочем").',
           },
           {
             id: 'vb-e4', type: 'mcq',
@@ -798,6 +931,19 @@ export const LESSONS: Lesson[] = [
               { ru: 'пять столов', translit: 'pyat\' stalóv', fr: '5 tables (génitif pluriel)' },
             ],
           },
+          {
+            heading: 'Nombres composés : seul le dernier chiffre compte',
+            body: 'Pour un nombre composé comme 21, 22 ou 25, c\'est UNIQUEMENT le dernier mot qui détermine l\'accord — pas le nombre entier. Ainsi 21 se comporte comme "1", 22 comme "2", et 25 comme "5". Exception à retenir : 11 à 14 suivent toujours la règle du génitif pluriel, même s\'ils se terminent visuellement par 1, 2, 3 ou 4.',
+            table: {
+              headers: ['Nombre', 'Se comporte comme', 'Exemple'],
+              rows: [
+                ['21 (двадцать один)', '"1" → singulier normal', 'двадцать один стол'],
+                ['22 (двадцать два)', '"2" → génitif singulier', 'двадцать два стола'],
+                ['25 (двадцать пять)', '"5" → génitif pluriel', 'двадцать пять столов'],
+                ['11 à 14', 'Toujours génitif pluriel (exception)', 'одиннадцать столов'],
+              ],
+            },
+          },
         ],
         exercises: [
           {
@@ -806,6 +952,20 @@ export const LESSONS: Lesson[] = [
             options: ['Le nominatif pluriel', 'Une forme spéciale (génitif singulier)', 'Le génitif pluriel', 'Aucun changement'],
             correct: 1,
             explanation: 'Règle A1 simplifiée : 2/3/4 + génitif singulier (ex. два стола).',
+          },
+          {
+            id: 'num-e7', type: 'mcq',
+            question: 'Pour un nombre composé comme "22", quel chiffre détermine l\'accord du nom ?',
+            options: ['Le premier chiffre (2 de 20)', 'Le dernier chiffre (2)', 'Les deux ensemble'],
+            correct: 1,
+            explanation: 'Seul le dernier mot du nombre compte : 22 se comporte comme "2" → génitif singulier.',
+          },
+          {
+            id: 'num-e8', type: 'mcq',
+            question: 'Quelle est l\'exception à la règle du dernier chiffre ?',
+            options: ['11 à 14, toujours génitif pluriel', '20 et 30, toujours singulier', 'Il n\'y a aucune exception'],
+            correct: 0,
+            explanation: '11-14 suivent toujours la règle du "5 et plus", malgré leur dernier chiffre.',
           },
           {
             id: 'num-e5', type: 'mcq',
