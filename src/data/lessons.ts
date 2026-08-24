@@ -495,6 +495,65 @@ export const LESSONS: Lesson[] = [
         ],
         maxScore: 20,
       },
+      {
+        id: 'syllables-3',
+        title: "L'accentuation : la clé de l'accent russe",
+        intro: "En russe, une seule syllabe par mot porte l'accent tonique — et elle se prononce nettement plus fort, plus longue et plus claire que les autres. Ignorer cette règle est LA raison n°1 pour laquelle un francophone garde un accent étranger très marqué, même après des années d'étude.",
+        sections: [
+          {
+            heading: "Un accent qui n'est jamais écrit",
+            body: "Contrairement au français où l'accent tonique est prévisible (souvent la dernière syllabe), en russe il peut tomber n'importe où et n'est indiqué nulle part dans l'écriture courante — seuls les dictionnaires et manuels pour débutants le notent avec un petit trait : ударе́ние. Il faut donc mémoriser l'accentuation avec chaque nouveau mot, comme son genre.",
+            examples: [
+              { ru: 'молоко́', translit: 'malako', fr: 'lait — accent sur la dernière syllabe' },
+              { ru: 'ру́сский', translit: 'rousski', fr: 'russe — accent sur la première syllabe' },
+            ],
+          },
+          {
+            heading: 'La réduction vocalique (акание)',
+            body: 'Conséquence directe de l\'accentuation : les voyelles о et а, quand elles ne sont PAS accentuées, perdent leur timbre net et se prononcent toutes les deux comme un "a" affaibli (proche du schwa anglais). C\'est le phénomène appelé акание. Un о non accentué ne se prononce donc presque jamais "o" franc !',
+            table: {
+              headers: ['Mot', 'Orthographe', 'Prononciation réelle', 'Explication'],
+              rows: [
+                ['окно́ (fenêtre, sg.)', 'o-k-NO', '"ak-NO"', 'о non accentué → "a" faible ; accent sur la finale, donc о final = "o" plein'],
+                ['о́кна (fenêtres, pl.)', 'OK-n-a', '"OK-na"', 'l\'accent a sauté sur le radical ; le о du radical est plein, le а final s\'affaiblit'],
+                ['молоко́', 'ma-la-KO', '"malako"', 'les deux о non accentués sonnent "a", seul le dernier (accentué) reste "o"'],
+              ],
+            },
+          },
+          {
+            heading: 'Pourquoi ça change tout',
+            body: 'Un même mot peut donc changer de prononciation selon la forme grammaticale utilisée, car l\'accent "se déplace" selon les mots en russe (окно́ → о́кна). C\'est déroutant au début, mais c\'est précisément ce qui donne au russe sa musicalité caractéristique. Astuce pratique : quand vous apprenez un nouveau mot, apprenez toujours sa syllabe accentuée en même temps — exactement comme vous apprenez son genre.',
+          },
+        ],
+        exercises: [
+          {
+            id: 'syl-e8', type: 'mcq',
+            question: 'Que devient un о non accentué en russe ?',
+            options: ['Il reste "o" dans tous les cas', 'Il s\'affaiblit et se prononce comme un "a"', 'Il devient muet'],
+            correct: 1,
+            explanation: 'C\'est le phénomène d\'акание : о et а non accentués se prononcent tous les deux "a" faible.',
+          },
+          {
+            id: 'syl-e9', type: 'mcq',
+            question: 'Dans "молоко" (lait), combien de о se prononcent réellement "o" plein ?',
+            options: ['Les trois', 'Un seul — le dernier, accentué', 'Aucun'],
+            correct: 1,
+            explanation: 'Seule la syllabe accentuée (la dernière ici) garde le son "o" plein : les deux premiers о sonnent "a".',
+          },
+          {
+            id: 'syl-e10', type: 'mcq',
+            question: 'Pourquoi faut-il apprendre l\'accent tonique de chaque nouveau mot ?',
+            options: [
+              'Parce qu\'il est toujours sur la même syllabe',
+              'Parce qu\'il n\'est pas prévisible et change la prononciation des voyelles voisines',
+              'Ce n\'est pas nécessaire, l\'accent n\'a aucun effet',
+            ],
+            correct: 1,
+            explanation: 'L\'accent russe est imprévisible et peut même se déplacer selon la forme grammaticale du mot.',
+          },
+        ],
+        maxScore: 20,
+      },
     ],
   },
   {
@@ -606,6 +665,67 @@ export const LESSONS: Lesson[] = [
             options: ['мать', 'объект', 'рыба', 'день'],
             correct: 1,
             explanation: 'объект (objet) contient un Ъ entre об- et -ъект.',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'phonetics-special-3',
+        title: "L'assourdissement final",
+        intro: "Dernière règle de prononciation essentielle avant de passer à la grammaire : en fin de mot, les consonnes « sonores » (voisées) perdent leur voix et se prononcent comme leur jumelle « sourde ». C'est une règle systématique, sans exception — et elle explique pourquoi хлеб (pain) ne se prononce jamais comme il s'écrit.",
+        sections: [
+          {
+            heading: 'Les 6 paires sonore / sourde',
+            body: 'Le russe organise ses consonnes en paires : une version "sonore" (les cordes vocales vibrent) et une version "sourde" (elles ne vibrent pas). En fin de mot, la sonore s\'assourdit systématiquement et se prononce comme sa jumelle sourde.',
+            table: {
+              headers: ['Sonore', 'Sourde', 'Exemple en fin de mot'],
+              rows: [
+                ['б', 'п', 'хлеб → se prononce "khlep"'],
+                ['в', 'ф', 'кровь → se prononce "krof\'"'],
+                ['г', 'к', 'друг → se prononce "drouk"'],
+                ['д', 'т', 'год → se prononce "got"'],
+                ['з', 'с', 'глаз → se prononce "glas"'],
+                ['ж', 'ш', 'нож → se prononce "noch"'],
+              ],
+            },
+          },
+          {
+            heading: 'Les sonorants : la seule exception',
+            body: 'Cinq consonnes n\'ont pas de jumelle sourde et ne s\'assourdissent donc jamais, même en fin de mot : р, л, м, н, й. On les appelle des sonorants.',
+            examples: [
+              { ru: 'дом', translit: 'dom', fr: 'maison — м final reste sonore, "dom" et non "domp"' },
+              { ru: 'стол', translit: 'stol', fr: 'table — л final reste sonore' },
+            ],
+          },
+          {
+            heading: 'Ça s\'applique aussi devant une consonne sourde',
+            body: 'Même règle à l\'intérieur d\'un mot, quand une consonne sonore précède directement une consonne sourde : elle s\'assourdit par anticipation. Exemple : « водка » (vodka) se prononce "votka", le д devenant т avant le к sourd.',
+          },
+        ],
+        exercises: [
+          {
+            id: 'ph-e5', type: 'mcq',
+            question: 'Comment se prononce réellement "хлеб" (pain) ?',
+            options: ['khleb, comme il s\'écrit', 'khlep, le б final s\'assourdit en п', 'khlev'],
+            correct: 1,
+            explanation: 'En fin de mot, б se prononce toujours п — c\'est l\'assourdissement final.',
+          },
+          {
+            id: 'ph-e6', type: 'mcq',
+            question: 'Laquelle de ces consonnes NE s\'assourdit JAMAIS en fin de mot ?',
+            options: ['д', 'м (un sonorant)', 'г'],
+            correct: 1,
+            explanation: 'Les sonorants (р, л, м, н, й) n\'ont pas de jumelle sourde et restent inchangés.',
+          },
+          {
+            id: 'ph-e7', type: 'match',
+            question: 'Associez chaque consonne sonore à sa jumelle sourde.',
+            pairs: [
+              { left: 'б', right: 'п' },
+              { left: 'д', right: 'т' },
+              { left: 'г', right: 'к' },
+              { left: 'з', right: 'с' },
+            ],
           },
         ],
         maxScore: 20,
