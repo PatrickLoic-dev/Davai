@@ -1994,4 +1994,250 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  {
+    id: 'grammar-prepositions-summary',
+    title: 'Récapitulatif des prépositions',
+    titleRu: 'Предлоги и падежи',
+    module: 'grammar',
+    level: 'A2',
+    order: 5,
+    prerequisites: ['grammar-prepositional'],
+    subLessons: [
+      {
+        id: 'grammar-prepositions-summary-1',
+        title: 'Quelle préposition, quel cas ?',
+        intro: "Vous avez maintenant vu les 6 cas russes et leurs prépositions associées. Certaines prépositions changent même de cas selon leur sens — c'est le moment de tout rassembler dans un tableau de référence unique.",
+        sections: [
+          {
+            heading: 'Tableau de référence complet',
+            body: 'Certaines prépositions comme в et на sont "à double sens" : elles gouvernent l\'accusatif pour le mouvement, et le prépositionnel pour la position statique. D\'autres, comme без ou для, sont fixes.',
+            table: {
+              headers: ['Préposition', 'Cas', 'Sens', 'Exemple'],
+              rows: [
+                ['без', 'Génitif', 'sans', 'без сахара'],
+                ['для', 'Génitif', 'pour', 'для мамы'],
+                ['из / у / до / после', 'Génitif', 'de / chez / avant / après', 'из России'],
+                ['к', 'Datif', 'vers (qqn)', 'к врачу'],
+                ['по', 'Datif', 'le long de / selon', 'по улице'],
+                ['с (со)', 'Instrumental', 'avec', 'с другом'],
+                ['в / на (mouvement)', 'Accusatif', 'vers (куда ?)', 'в школу'],
+                ['в / на (position)', 'Prépositionnel', 'à, dans, sur (где ?)', 'в школе'],
+                ['о / об', 'Prépositionnel', 'à propos de', 'о России'],
+              ],
+            },
+          },
+          {
+            heading: 'La méthode pour ne plus se tromper',
+            body: '1) Identifiez d\'abord le SENS voulu (direction ? moyen ? absence ? sujet de conversation ?). 2) Retrouvez la préposition qui correspond à ce sens dans le tableau. 3) Appliquez le cas indiqué au nom qui suit. Avec de la pratique, ce réflexe devient automatique.',
+          },
+        ],
+        exercises: [
+          {
+            id: 'psum-e1', type: 'mcq',
+            question: 'Quel cas suit "без" (sans) ?',
+            options: ['Accusatif', 'Génitif', 'Instrumental'],
+            correct: 1,
+            explanation: 'без est une préposition fixe du génitif.',
+          },
+          {
+            id: 'psum-e2', type: 'mcq',
+            question: 'Pourquoi в et на peuvent-elles gouverner deux cas différents ?',
+            options: [
+              'Selon qu\'elles expriment un mouvement (accusatif) ou une position (prépositionnel)',
+              'Selon le genre du nom qui suit',
+              'C\'est aléatoire, il faut deviner',
+            ],
+            correct: 0,
+            explanation: 'куда ? (mouvement) → accusatif ; где ? (position) → prépositionnel.',
+          },
+          {
+            id: 'psum-e3', type: 'match',
+            question: 'Associez chaque préposition à son cas.',
+            pairs: [
+              { left: 'без', right: 'Génitif' },
+              { left: 'к', right: 'Datif' },
+              { left: 'с', right: 'Instrumental' },
+              { left: 'о', right: 'Prépositionnel' },
+            ],
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-prepositions-summary-2',
+        title: 'Pratique mixte : tous les cas ensemble',
+        intro: "Place à la synthèse : cette évaluation mélange volontairement génitif, datif, instrumental et prépositionnel dans des phrases variées, pour vérifier que vous savez choisir le bon cas selon le contexte — pas seulement le réciter isolément.",
+        sections: [
+          {
+            heading: 'Rappel express des 4 cas A2',
+            table: {
+              headers: ['Cas', 'Question', 'Usage clé'],
+              rows: [
+                ['Génitif', 'Кого? Чего?', 'possession, absence (нет), quantité'],
+                ['Датив', 'Кому? Чему?', 'destinataire, constructions impersonnelles'],
+                ['Instrumental', 'Кем? Чем?', 'moyen, accompagnement (с), profession'],
+                ['Prépositionnel', 'О ком? О чём? Где?', 'localisation statique, sujet de conversation'],
+              ],
+            },
+            body: '',
+          },
+        ],
+        exercises: [
+          {
+            id: 'psum-e4', type: 'mcq',
+            question: '« Elle a peur de mon chien » n\'existe pas en russe simple, mais « У меня нет собаки » utilise :',
+            options: ['Le génitif (absence)', 'Le datif', "L'instrumental"],
+            correct: 0,
+            explanation: 'нет + génitif : собаки.',
+          },
+          {
+            id: 'psum-e5', type: 'mcq',
+            question: '« Je travaille comme médecin » (работаю врачом) utilise :',
+            options: ['Le génitif', "L'instrumental (profession)", 'Le prépositionnel'],
+            correct: 1,
+            explanation: 'работать + profession à l\'instrumental.',
+          },
+          {
+            id: 'psum-e6', type: 'mcq',
+            question: '« Je pense à toi » (думаю о тебе) utilise :',
+            options: ['Le prépositionnel (о + qqn)', 'Le datif', 'Le génitif'],
+            correct: 0,
+            explanation: 'думать о + prépositionnel.',
+          },
+          {
+            id: 'psum-e7', type: 'mcq',
+            question: '« J\'aide mon frère » (помогаю брату) utilise :',
+            options: ['Le génitif', 'Le datif (destinataire de l\'aide)', "L'instrumental"],
+            correct: 1,
+            explanation: 'помогать + datif : le bénéficiaire de l\'aide.',
+          },
+        ],
+        maxScore: 20,
+      },
+    ],
+  },
+  {
+    id: 'grammar-aspect',
+    title: "L'aspect verbal — introduction",
+    titleRu: 'Вид глагола',
+    module: 'grammar',
+    level: 'A2',
+    order: 6,
+    prerequisites: ['grammar-verbs'],
+    subLessons: [
+      {
+        id: 'grammar-aspect-1',
+        title: 'Imperfectif et perfectif : deux façons de voir une action',
+        intro: "C'est probablement la notion la plus déroutante — et la plus fondamentale — de la grammaire russe pour un francophone : presque chaque verbe existe en DEUX versions, qui ne décrivent pas un temps différent, mais une manière différente de considérer l'action.",
+        sections: [
+          {
+            heading: "Deux aspects, pas deux temps",
+            body: 'L\'imperfectif décrit une action en cours, habituelle, ou dont l\'achèvement importe peu. Le perfectif décrit une action ponctuelle, achevée, avec un résultat concret. Ce ne sont pas des synonymes interchangeables : chaque verbe russe (ou presque) a une paire imperfectif/perfectif, avec un sens lexical identique mais un aspect différent.',
+            table: {
+              headers: ['Imperfectif', 'Perfectif', 'Sens de base'],
+              rows: [
+                ['делать', 'сделать', 'faire'],
+                ['читать', 'прочитать', 'lire'],
+                ['писать', 'написать', 'écrire'],
+                ['говорить', 'сказать', 'dire'],
+                ['смотреть', 'посмотреть', 'regarder'],
+              ],
+            },
+          },
+          {
+            heading: 'Une règle capitale : pas de présent perfectif',
+            body: 'C\'est peut-être le point le plus contre-intuitif : un verbe perfectif n\'a JAMAIS de présent — logique, puisque le présent décrit une action en cours, et le perfectif ne décrit que des actions achevées ou à venir. Un verbe perfectif conjugué "au présent" exprime en réalité... le futur.',
+            examples: [
+              { ru: 'я делаю', translit: 'ya dyelayou', fr: 'je fais (imperfectif, présent réel)' },
+              { ru: 'я сделаю', translit: 'ya sdyelayou', fr: 'je ferai (perfectif, en réalité un futur !)' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'asp-e1', type: 'mcq',
+            question: 'Quelle est la différence fondamentale entre делать et сделать ?',
+            options: [
+              'Ce sont deux verbes sans rapport',
+              'Même sens de base, mais делать = en cours/habituel, сделать = achevé/ponctuel',
+              'делать est plus poli',
+            ],
+            correct: 1,
+            explanation: 'Ils forment une paire aspectuelle : même sens lexical, aspect différent.',
+          },
+          {
+            id: 'asp-e2', type: 'mcq',
+            question: 'Un verbe perfectif conjugué avec les terminaisons du présent exprime en réalité :',
+            options: ['Le présent', 'Le futur', 'Le passé'],
+            correct: 1,
+            explanation: 'Le perfectif n\'a pas de présent — sa forme "présente" est en fait un futur.',
+          },
+          {
+            id: 'asp-e3', type: 'match',
+            question: 'Associez chaque verbe imperfectif à son perfectif.',
+            pairs: [
+              { left: 'делать', right: 'сделать' },
+              { left: 'читать', right: 'прочитать' },
+              { left: 'писать', right: 'написать' },
+              { left: 'говорить', right: 'сказать' },
+            ],
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-aspect-2',
+        title: 'Choisir le bon aspect',
+        intro: "Passons à la pratique : comment savoir, dans une phrase donnée, s'il faut l'imperfectif ou le perfectif ? Une question simple suffit dans la grande majorité des cas.",
+        sections: [
+          {
+            heading: 'La question à se poser',
+            body: 'Demandez-vous : « Est-ce que je m\'intéresse au PROCESSUS/à l\'HABITUDE, ou au RÉSULTAT/à l\'événement unique ? » Processus, durée, répétition, négation d\'un fait habituel → imperfectif. Un seul événement précis avec un résultat visible → perfectif.',
+            table: {
+              headers: ['Contexte', 'Aspect', 'Exemple'],
+              rows: [
+                ['Action habituelle', 'Imperfectif', 'Я читаю каждый вечер. (Je lis chaque soir.)'],
+                ['Action en cours', 'Imperfectif', 'Я читаю книгу сейчас. (Je lis un livre là, maintenant.)'],
+                ['Résultat ponctuel (passé)', 'Perfectif', 'Я прочитал книгу. (J\'ai fini de lire le livre — résultat.)'],
+                ['Événement unique (futur)', 'Perfectif', 'Я прочитаю книгу завтра. (Je lirai le livre demain — je le terminerai.)'],
+              ],
+            },
+          },
+          {
+            heading: 'Astuce de formation : le préfixe',
+            body: 'Bonne nouvelle pour la mémorisation : la plupart des perfectifs se forment en ajoutant un préfixe à l\'imperfectif (по-, про-, на-, с-...). Ce n\'est pas une règle à 100%, mais elle aide à reconnaître les paires au premier coup d\'œil.',
+            examples: [
+              { ru: 'читать → прочитать', translit: 'tchitat\' → protchitat\'', fr: 'préfixe про-' },
+              { ru: 'делать → сделать', translit: 'dyelat\' → sdyelat\'', fr: 'préfixe с-' },
+              { ru: 'смотреть → посмотреть', translit: 'smatryet\' → pasmatryet\'', fr: 'préfixe по-' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'asp-e4', type: 'mcq',
+            question: '« Je lis chaque soir » (action habituelle) demande :',
+            options: ['Imperfectif : читаю', 'Perfectif : прочитаю'],
+            correct: 0,
+            explanation: 'Habitude/répétition → imperfectif.',
+          },
+          {
+            id: 'asp-e5', type: 'mcq',
+            question: '« J\'ai fini de lire le livre » (résultat obtenu) demande :',
+            options: ['Imperfectif : читал', 'Perfectif : прочитал'],
+            correct: 1,
+            explanation: 'Résultat achevé, ponctuel → perfectif.',
+          },
+          {
+            id: 'asp-e6', type: 'mcq',
+            question: 'Comment se forme la majorité des perfectifs ?',
+            options: ['En changeant la terminaison seulement', 'En ajoutant un préfixe à l\'imperfectif', 'Ce sont des mots totalement différents à chaque fois'],
+            correct: 1,
+            explanation: 'La préfixation (по-, про-, на-, с-...) est le procédé le plus courant.',
+          },
+        ],
+        maxScore: 20,
+      },
+    ],
+  },
 ];
