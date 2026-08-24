@@ -98,12 +98,25 @@ export const LESSONS: Lesson[] = [
       {
         id: 'alphabet-intro-1',
         title: '10 lettres faciles',
-        intro: "Le russe s'écrit avec l'alphabet cyrillique — 33 lettres au total. Commençons par celles qui ressemblent ET se prononcent comme en français.",
+        intro: "Le russe s'écrit avec l'alphabet cyrillique — 33 lettres au total. Plutôt que de les apprendre dans l'ordre, la méthode la plus efficace consiste à les regrouper en familles de 5 à 7 lettres selon leur degré de familiarité : c'est ce qu'on va faire, en commençant par les plus faciles.",
         sections: [
           {
-            heading: '10 lettres faciles',
-            body: 'Ces lettres ressemblent ET se prononcent comme leurs équivalentes latines :',
-            examples: [{ ru: 'А, Е, О, К, М, Т', translit: 'A, Ye, O, K, M, T', fr: 'sons similaires' }],
+            heading: 'Pourquoi apprendre par groupes ?',
+            body: "La mémoire retient beaucoup mieux l'information organisée en petits paquets de 5 à 7 éléments plutôt qu'une liste de 33 lettres d'un coup. On va donc avancer par étapes : d'abord les lettres identiques au français, puis les « faux amis » (leçon suivante), puis les formes uniques. Avec 15 à 20 minutes par jour, la plupart des débutants lisent le cyrillique couramment en 2 à 4 semaines.",
+          },
+          {
+            heading: 'Groupe 1 — lettres identiques',
+            body: 'Ces lettres ont exactement la même forme ET le même son qu\'en français : rien à réapprendre, juste à reconnaître.',
+            table: {
+              headers: ['Lettre', 'Astuce mnémotechnique', 'Exemple'],
+              rows: [
+                ['А', 'Un simple A', 'арбуз (arbouz) — pastèque'],
+                ['К', 'Un K tout court', 'кот (kot) — chat'],
+                ['М', 'Un M, comme partout', 'мама (mama) — maman'],
+                ['О', 'Un rond, comme le O', 'окно (akno) — fenêtre'],
+                ['Т', 'Un T classique', 'такси (taxi) — taxi'],
+              ],
+            },
           },
         ],
         exercises: [
@@ -134,22 +147,33 @@ export const LESSONS: Lesson[] = [
       {
         id: 'alphabet-intro-2',
         title: 'Faux amis',
-        intro: "Certaines lettres cyrilliques ressemblent au latin mais se prononcent tout autrement — les fameux « faux amis » de l'alphabet.",
+        intro: "Après des années à lire l'alphabet latin, votre cerveau a construit des réflexes visuels puissants entre une forme de lettre et un son. Le problème : six lettres cyrilliques très fréquentes ont exactement la forme d'une lettre latine... mais un son totalement différent. Ce sont les fameux « faux amis » — la plus grande source d'erreurs des débutants.",
         sections: [
           {
-            heading: 'Faux amis',
-            body: 'Ces lettres ressemblent au latin mais sonnent différemment — attention !',
+            heading: 'Les 6 faux amis classiques',
+            body: 'Pour chacune, oubliez ce que votre œil reconnaît et associez-la plutôt à son astuce mnémotechnique :',
             table: {
-              headers: ['Lettre', 'Ressemble à', 'Se prononce'],
+              headers: ['Lettre', 'Ressemble à', 'Se prononce', 'Astuce'],
               rows: [
-                ['В', 'B', 'V (verre)'],
-                ['Н', 'H', 'N (non)'],
-                ['Р', 'P', 'R (roulé)'],
-                ['С', 'C', 'S (soleil)'],
-                ['У', 'Y', 'OU (loup)'],
-                ['Х', 'X', 'KH (Bach)'],
+                ['В', 'B', 'V (verre)', 'Le signe "victoire" (V) fait avec les doigts'],
+                ['Н', 'H', 'N (non)', 'Deux poteaux comme un but de foot — "N" comme "Net"'],
+                ['Р', 'P', 'R (roulé)', 'Un pirate qui dit "Arrr !"'],
+                ['С', 'C', 'S (soleil)', 'Un serpent en forme de C qui siffle "sss"'],
+                ['У', 'Y', 'OU (coucou)', 'Une coupe en forme de crochet — on dit "ouh"'],
+                ['Х', 'X', 'KH (comme la jota espagnole)', 'On se racle la gorge, comme pour tousser'],
               ],
             },
+          },
+          {
+            heading: 'En contexte',
+            body: 'Ces lettres se combinent constamment dans des mots courants — s\'entraîner à les lire en contexte est la meilleure façon de désapprendre le réflexe latin.',
+            examples: [
+              { ru: 'ресторан', translit: 'restoran', fr: 'restaurant — pas "pectopah" !' },
+              { ru: 'вода', translit: 'vada', fr: 'eau' },
+              { ru: 'работа', translit: 'rabota', fr: 'travail' },
+              { ru: 'спасибо', translit: 'spasiba', fr: 'merci' },
+              { ru: 'хорошо', translit: 'kharacho', fr: 'bien / d\'accord' },
+            ],
           },
         ],
         exercises: [
