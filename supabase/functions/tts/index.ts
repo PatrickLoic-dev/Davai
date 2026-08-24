@@ -13,9 +13,8 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 const BUCKET = 'tts-cache';
 // Multilingual model with solid Russian pronunciation.
 const MODEL_ID = 'eleven_multilingual_v2';
-// "Sarah" — a premade voice included on the free plan (library voices require
-// a paid plan to use via the API). Swap for any premade voice id you prefer.
-const VOICE_ID = 'EXAVITQu4vr4xnSDxMaL';
+// "Arcadays" — a Russian voice from the user's ElevenLabs account.
+const VOICE_ID = 's0phbFBBp708ZeIy8oGx';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
