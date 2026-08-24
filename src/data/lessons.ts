@@ -1455,4 +1455,288 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+
+  // ══════════════════════════════════════════════════════════════
+  // NIVEAU A2
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'grammar-genitive',
+    title: 'Le génitif',
+    titleRu: 'Родительный падеж',
+    module: 'grammar',
+    level: 'A2',
+    order: 1,
+    prerequisites: ['grammar-cases'],
+    subLessons: [
+      {
+        id: 'grammar-genitive-1',
+        title: 'Possession et négation',
+        intro: "Le génitif est le cas le plus polyvalent du russe — celui qui revient le plus souvent après le nominatif et l'accusatif. On commence par ses deux emplois les plus fréquents : exprimer la possession, et marquer l'absence après « нет ».",
+        sections: [
+          {
+            heading: 'La possession : « le livre DU professeur »',
+            body: 'Contrairement au français qui utilise « de » + nom, le russe met directement le possesseur au génitif, sans préposition. L\'objet possédé reste au cas dont la phrase a besoin (souvent nominatif ou accusatif), et c\'est le possesseur qui prend la marque du génitif.',
+            table: {
+              headers: ['Nominatif (dico)', 'Genre', 'Génitif singulier', 'Règle'],
+              rows: [
+                ['стол', 'Masculin (consonne)', 'стола', '+ а'],
+                ['музей', 'Masculin (-й)', 'музея', '+ я'],
+                ['окно', 'Neutre (-о)', 'окна', '-о → -а'],
+                ['книга', 'Féminin (-а)', 'книги', '-а → -и (après г,к,х,ж,ш,щ,ч)'],
+                ['неделя', 'Féminin (-я)', 'недели', '-я → -и'],
+              ],
+            },
+          },
+          {
+            heading: 'L\'absence : « нет + génitif »',
+            body: 'Pour dire qu\'il n\'y a pas quelque chose, ou qu\'on n\'a pas quelque chose, le russe utilise toujours нет suivi du génitif — jamais de l\'accusatif, même si на français on pense "objet direct". Cette structure fonctionne à tous les temps : не́ было (passé), не бу́дет (futur).',
+            examples: [
+              { ru: 'У меня нет книги.', translit: 'Ou menya nyet knigi.', fr: 'Je n\'ai pas de livre. (littéralement : chez moi il n\'y a pas de livre)' },
+              { ru: 'Здесь нет метро.', translit: 'Zdyes\' nyet myetro.', fr: 'Il n\'y a pas de métro ici.' },
+              { ru: 'Вчера не было урока.', translit: 'Vtchera nye byla ouroka.', fr: 'Hier il n\'y avait pas cours.' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'gen-e1', type: 'mcq',
+            question: 'Comment dit-on « le livre du professeur » (professeur → génitif) ?',
+            options: ['книга учителя', 'книга учитель', 'книгу учителя'],
+            correct: 0,
+            explanation: 'Le possesseur (учитель) passe au génitif : учителя. Le livre reste au nominatif.',
+          },
+          {
+            id: 'gen-e2', type: 'mcq',
+            question: '« Je n\'ai pas de livre » se traduit par « У меня нет ___ » — quelle forme pour книга ?',
+            options: ['книга', 'книгу', 'книги'],
+            correct: 2,
+            explanation: 'нет exige toujours le génitif : книга → книги.',
+          },
+          {
+            id: 'gen-e3', type: 'fill',
+            question: 'Mettez "окно" au génitif singulier : ___',
+            correct: 'окна',
+            hint: 'Neutre en -о → génitif en -а',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-genitive-2',
+        title: 'Quantités et prépositions',
+        intro: 'Second grand usage du génitif : exprimer une quantité — précise (chiffres, déjà vu en A1) ou indéfinie (beaucoup, peu, assez). On termine avec les prépositions qui gouvernent systématiquement ce cas.',
+        sections: [
+          {
+            heading: 'Quantités indéfinies',
+            body: 'Les mots de quantité indéfinie (много = beaucoup, мало = peu, сколько = combien, несколько = quelques) sont TOUJOURS suivis du génitif — au pluriel si le nom est comptable, au singulier s\'il est indénombrable.',
+            examples: [
+              { ru: 'У меня много книг.', translit: 'Ou menya mnoga knig.', fr: 'J\'ai beaucoup de livres. (книг = génitif pluriel)' },
+              { ru: 'Сколько времени?', translit: 'Skol\'ka vremeni?', fr: 'Quelle heure est-il ? (littéralement : combien de temps ?)' },
+              { ru: 'У неё мало денег.', translit: 'Ou nyeyo mala dyenyeg.', fr: 'Elle a peu d\'argent.' },
+            ],
+          },
+          {
+            heading: 'Le pluriel génitif : rappel des 3 terminaisons',
+            body: 'Comme vu avec les chiffres en A1, le génitif pluriel prend trois formes selon le genre : -ов/-ев pour la plupart des masculins, -ей pour les mots en -ь et après ж/ш/ч/щ, et souvent une désinence zéro pour les féminins en -а et neutres en -о.',
+            table: {
+              headers: ['Type', 'Nominatif pluriel', 'Génitif pluriel', 'Terminaison'],
+              rows: [
+                ['Masculin', 'столы', 'столов', '-ов'],
+                ['Masculin (-ь, ч)', 'словари', 'словарей', '-ей'],
+                ['Féminin (-а)', 'книги', 'книг', 'zéro'],
+                ['Neutre (-о)', 'окна', 'окон', 'zéro (+ voyelle mobile)'],
+              ],
+            },
+          },
+          {
+            heading: 'Les prépositions du génitif',
+            body: 'Une poignée de prépositions très fréquentes exigent systématiquement le génitif — à mémoriser en bloc.',
+            table: {
+              headers: ['Préposition', 'Sens', 'Exemple'],
+              rows: [
+                ['без', 'sans', 'кофе без сахара (café sans sucre)'],
+                ['для', 'pour', 'подарок для мамы (cadeau pour maman)'],
+                ['из', 'de, en provenance de', 'я из Франции (je viens de France)'],
+                ['у', 'chez, près de', 'у меня, у окна'],
+                ['до / после', 'avant / après', 'до урока, после работы'],
+              ],
+            },
+          },
+        ],
+        exercises: [
+          {
+            id: 'gen-e4', type: 'mcq',
+            question: '« Beaucoup de livres » (много + книга au pluriel) se dit :',
+            options: ['много книга', 'много книг', 'много книги'],
+            correct: 1,
+            explanation: 'много est toujours suivi du génitif pluriel : книг.',
+          },
+          {
+            id: 'gen-e5', type: 'mcq',
+            question: 'Quelle préposition signifie « sans » ?',
+            options: ['для', 'без', 'из'],
+            correct: 1,
+            explanation: 'без + génitif = sans (кофе без сахара = café sans sucre).',
+          },
+          {
+            id: 'gen-e6', type: 'match',
+            question: 'Associez chaque préposition à son sens.',
+            pairs: [
+              { left: 'без', right: 'sans' },
+              { left: 'для', right: 'pour' },
+              { left: 'из', right: 'de (provenance)' },
+              { left: 'до', right: 'avant' },
+            ],
+          },
+        ],
+        maxScore: 20,
+      },
+    ],
+  },
+  {
+    id: 'grammar-dative',
+    title: 'Le datif',
+    titleRu: 'Дательный падеж',
+    module: 'grammar',
+    level: 'A2',
+    order: 2,
+    prerequisites: ['grammar-genitive'],
+    subLessons: [
+      {
+        id: 'grammar-dative-1',
+        title: "L'objet indirect",
+        intro: 'Le datif marque le destinataire d\'une action — celui "à qui" ou "pour qui" on fait quelque chose. Vous l\'avez déjà croisé sans le savoir dans « Мне 20 лет » (littéralement : "à moi, 20 ans").',
+        sections: [
+          {
+            heading: 'Les terminaisons du datif singulier',
+            body: 'Le datif suit une logique proche du prépositionnel — à retenir surtout par contraste avec le génitif déjà vu.',
+            table: {
+              headers: ['Nominatif', 'Genre', 'Datif singulier', 'Règle'],
+              rows: [
+                ['брат', 'Masculin', 'брату', '+ у'],
+                ['музей', 'Masculin (-й)', 'музею', '+ ю'],
+                ['окно', 'Neutre', 'окну', '-о → -у'],
+                ['мама', 'Féminin (-а)', 'маме', '-а → -е'],
+                ['Мария', 'Féminin (-я)', 'Марии', '-я → -и'],
+              ],
+            },
+          },
+          {
+            heading: 'Les verbes qui gouvernent le datif',
+            body: 'Une famille de verbes très fréquents — tous liés à la communication ou au don — placent systématiquement leur destinataire au datif, jamais à l\'accusatif comme en français.',
+            examples: [
+              { ru: 'Я дал книгу брату.', translit: 'Ya dal knigou bratou.', fr: "J'ai donné le livre à mon frère." },
+              { ru: 'Она рассказала историю детям.', translit: 'Ana rasskazala istoriyou dyetyam.', fr: 'Elle a raconté une histoire aux enfants.' },
+              { ru: 'Я звоню маме.', translit: 'Ya zvanyou mamye.', fr: "J'appelle maman." },
+              { ru: 'Помоги мне, пожалуйста.', translit: 'Pamagi mnye, pajalousta.', fr: 'Aide-moi, s\'il te plaît (помочь + datif).' },
+            ],
+          },
+          {
+            heading: 'Les prépositions к et по',
+            body: 'к (vers, chez) exprime un mouvement vers une personne ou un lieu ; по (le long de, selon) s\'utilise pour un déplacement le long d\'un espace, ou pour "selon/d\'après".',
+            table: {
+              headers: ['Préposition', 'Sens', 'Exemple'],
+              rows: [
+                ['к + datif', 'vers (une personne)', 'Я иду к врачу. (Je vais chez le médecin.)'],
+                ['по + datif', 'le long de / selon', 'гулять по городу (se promener dans la ville)'],
+              ],
+            },
+          },
+        ],
+        exercises: [
+          {
+            id: 'dat-e1', type: 'mcq',
+            question: 'Mettez "брат" (frère) au datif singulier : "Я дал книгу ___"',
+            options: ['брата', 'брату', 'братом'],
+            correct: 1,
+            explanation: 'Masculin → datif en -у : брату.',
+          },
+          {
+            id: 'dat-e2', type: 'mcq',
+            question: 'Quel cas suit systématiquement le verbe "звонить" (téléphoner à) ?',
+            options: ['Accusatif', 'Datif', 'Génitif'],
+            correct: 1,
+            explanation: 'звонить + datif : Я звоню маме (j\'appelle maman), pas "звоню маму".',
+          },
+          {
+            id: 'dat-e3', type: 'fill',
+            question: 'Mettez "мама" au datif singulier : ___',
+            correct: 'маме',
+            hint: 'Féminin -а → datif -е',
+          },
+        ],
+        maxScore: 20,
+      },
+      {
+        id: 'grammar-dative-2',
+        title: 'Constructions impersonnelles',
+        intro: "L'un des usages les plus utiles du datif : les phrases impersonnelles, où le russe ne dit jamais « JE ressens/dois/peux », mais littéralement « À MOI c'est... ». Une structure fondamentalement différente du français à maîtriser tôt.",
+        sections: [
+          {
+            heading: 'Aimer : нравиться',
+            body: 'Pour dire "j\'aime", le russe inverse la logique : ce n\'est pas la personne qui "aime" activement, c\'est la chose qui "plaît à" la personne. Le sujet grammatical est donc l\'objet aimé (au nominatif), et la personne passe au datif.',
+            examples: [
+              { ru: 'Мне нравится этот фильм.', translit: 'Mnye nravitsa etat fil\'m.', fr: "J'aime ce film. (littéralement : ce film me plaît)" },
+              { ru: 'Ей нравится музыка.', translit: 'Yey nravitsa mouzyka.', fr: 'Elle aime la musique.' },
+            ],
+          },
+          {
+            heading: 'Nécessité et permission : нужно, надо, можно, нельзя',
+            body: 'Ces quatre mots-clés fonctionnent tous de la même façon : sujet logique au datif + le mot invariable + verbe à l\'infinitif.',
+            table: {
+              headers: ['Mot', 'Sens', 'Exemple'],
+              rows: [
+                ['нужно / надо', 'il faut, avoir besoin de', 'Мне нужно идти. (Je dois y aller.)'],
+                ['можно', 'on peut, il est permis', 'Здесь можно курить? (On peut fumer ici ?)'],
+                ['нельзя', 'on ne peut pas, interdit', 'Ей нельзя водить машину. (Elle n\'a pas le droit de conduire.)'],
+              ],
+            },
+          },
+          {
+            heading: 'États physiques et émotionnels',
+            body: 'Même logique pour le froid, le chaud, l\'ennui ou la tristesse : le russe ne dit jamais « je suis froid », mais « à moi il fait froid ».',
+            examples: [
+              { ru: 'Мне холодно.', translit: 'Mnye kholadna.', fr: "J'ai froid." },
+              { ru: 'Тебе скучно?', translit: 'Tyebye skoutchna?', fr: "Tu t'ennuies ?" },
+              { ru: 'Нам весело.', translit: 'Nam vyesyela.', fr: 'On s\'amuse.' },
+            ],
+          },
+        ],
+        exercises: [
+          {
+            id: 'dat-e4', type: 'mcq',
+            question: '« J\'aime ce film » se dit littéralement :',
+            options: ['Я люблю этот фильм (je aime)', 'Мне нравится этот фильм (à moi, ce film plaît)', 'Этот фильм любит меня'],
+            correct: 1,
+            explanation: 'нравиться inverse la construction : le film est sujet, la personne est au datif.',
+          },
+          {
+            id: 'dat-e5', type: 'mcq',
+            question: 'Comment dit-on « je dois partir » ?',
+            options: ['Я нужно идти', 'Мне нужно идти', 'Меня нужно идти'],
+            correct: 1,
+            explanation: 'Sujet logique au datif : мне + нужно + infinitif.',
+          },
+          {
+            id: 'dat-e6', type: 'mcq',
+            question: '« J\'ai froid » se traduit par :',
+            options: ['Я холодный', 'Мне холодно', 'Я холодно'],
+            correct: 1,
+            explanation: 'Les états physiques utilisent le datif : мне холодно (littéralement "à moi il fait froid").',
+          },
+          {
+            id: 'dat-e7', type: 'match',
+            question: 'Associez chaque mot à son sens.',
+            pairs: [
+              { left: 'нужно', right: 'il faut' },
+              { left: 'можно', right: 'on peut' },
+              { left: 'нельзя', right: 'interdit' },
+              { left: 'нравится', right: 'plaît à' },
+            ],
+          },
+        ],
+        maxScore: 20,
+      },
+    ],
+  },
 ];
