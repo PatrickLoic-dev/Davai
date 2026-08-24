@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Globe, Film, Briefcase, Target, Zap, Flame, Trophy, Check, SkipForward } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowRight, Globe, Film, Briefcase, Target, Zap, Flame, Trophy, Check } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
-import { LESSONS, lessonXpReward } from '../data/lessons';
+import { CEFRLevel } from '../data/lessons';
+import LevelTest from './LevelTest';
 import { AppLogo } from './Logo';
 
 interface Props { onComplete: () => void; }
@@ -9,23 +10,14 @@ interface Props { onComplete: () => void; }
 type Motivation = 'travel' | 'culture' | 'work' | 'challenge';
 type DailyGoal  = 'casual' | 'intense' | 'champion';
 
-interface PlacementQuestion {
-  lessonId: string;
-  question: string;
-  options: string[];
-  correct: number;
-}
-
-/* One representative question per early lesson — a correct answer skips
-   straight to "already known" instead of forcing the user through it. */
-const PLACEMENT: PlacementQuestion[] = [
-  { lessonId: 'alphabet-intro', question: 'Que signifie la lettre В en russe ?', options: ['Son B', 'Son V', 'Son W'], correct: 1 },
-  { lessonId: 'phonetics-special', question: 'Le son Ы ressemble le plus à :', options: ['Un "i" classique', 'Un "i" avec la langue reculée', 'Un "ou"'], correct: 1 },
-  { lessonId: 'grammar-gender', question: 'Quel est le genre de "стол" (table) ?', options: ['Masculin', 'Féminin', 'Neutre'], correct: 0 },
-  { lessonId: 'grammar-cases', question: '"Я вижу книгу" — quel cas est "книгу" ?', options: ['Nominatif', 'Accusatif', 'Génitif'], correct: 1 },
-  { lessonId: 'grammar-verbs', question: 'Comment dit-on "je lis" (читать) ?', options: ['я читаю', 'я читаешь', 'я читает'], correct: 0 },
-  { lessonId: 'numbers-cardinal', question: 'Comment dit-on "5" en russe ?', options: ['четыре', 'пять', 'шесть'], correct: 1 },
-];
+const LEVEL_BLURB: Record<CEFRLevel, string> = {
+  A1: 'Débutant — on part de l\'alphabet.',
+  A2: 'Élémentaire — vous connaissez déjà les bases.',
+  B1: 'Intermédiaire — vous vous débrouillez au quotidien.',
+  B2: 'Intermédiaire avancé — bonne aisance générale.',
+  C1: 'Avancé — vous maîtrisez des nuances fines.',
+  C2: 'Quasi bilingue — impressionnant !',
+};
 
 const MOTIVATIONS: { id: Motivation; label: string; sub: string; Icon: React.ElementType }[] = [
   { id: 'travel',    label: 'Voyager',       sub: 'Communiquer avec les locaux',  Icon: Globe     },
@@ -60,55 +52,24 @@ export default function Onboarding({ onComplete }: Props) {
   const [animIn, setAnimIn]         = useState(true);
   const [done, setDone]             = useState(false);
 
-  const [placementIdx, setPlacementIdx]         = useState(0);
-  const [placementSelected, setPlacementSelected] = useState<number | null>(null);
-  const [placementResults, setPlacementResults] = useState<Record<string, boolean>>({});
-  const placementApplied = useRef(false);
-  const knownCount = Object.values(placementResults).filter(Boolean).length;
+  const [assignedLevel, setAssignedLevel] = useState<CEFRLevel>('A1');
 
   function advance(next: number) {
     setAnimIn(false);
     setTimeout(() => { setStep(next); setAnimIn(true); }, 260);
   }
 
-  function answerPlacement(idx: number) {
-    if (placementSelected !== null) return;
-    const q = PLACEMENT[placementIdx];
-    setPlacementSelected(idx);
-    setPlacementResults(r => ({ ...r, [q.lessonId]: idx === q.correct }));
-    setTimeout(() => {
-      if (placementIdx + 1 < PLACEMENT.length) {
-        setPlacementIdx(i => i + 1);
-        setPlacementSelected(null);
-      } else {
-        advance(3);
-      }
-    }, 550);
-  }
-
-  function skipPlacement() {
-    setPlacementResults({});
+  function finishPlacement(level: CEFRLevel) {
+    setAssignedLevel(level);
+    dispatch({ type: 'SET_CEFR_LEVEL', level });
     advance(3);
   }
 
-  /* Apply placement results once, when reaching the summary step: mark
-     already-known lessons complete so LearningPath/GrammarModule start
-     the user ahead instead of forcing every lesson from zero. */
-  useEffect(() => {
-    if (step !== 3 || placementApplied.current) return;
-    placementApplied.current = true;
-    Object.entries(placementResults).forEach(([lessonId, correct]) => {
-      if (!correct) return;
-      const lesson = LESSONS.find(l => l.id === lessonId);
-      if (!lesson) return;
-      // A correct placement answer counts as "already knows this lesson" —
-      // mark every one of its sub-lessons complete, silently (no streak).
-      lesson.subLessons.forEach(sl => {
-        dispatch({ type: 'COMPLETE_LESSON', lessonId: sl.id, silent: true });
-      });
-      dispatch({ type: 'ADD_XP', amount: lessonXpReward(lesson) });
-    });
-  }, [step, placementResults, dispatch]);
+  function skipPlacement() {
+    setAssignedLevel('A1');
+    dispatch({ type: 'SET_CEFR_LEVEL', level: 'A1' });
+    advance(3);
+  }
 
   useEffect(() => {
     if (done) { const t = setTimeout(onComplete, 1200); return () => clearTimeout(t); }
@@ -249,53 +210,20 @@ export default function Onboarding({ onComplete }: Props) {
             </>
           )}
 
-          {/* ── Step 2: Placement test ── */}
+          {/* ── Step 2: Placement test (30 questions, A1→C2, level hidden) ── */}
           {step === 2 && (
             <>
-              <div style={{ marginBottom: '2.5rem' }}>
+              <div style={{ marginBottom: '2rem' }}>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.12em', color: '#A3A3A3', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Étape 3 · Test de niveau</p>
                 <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(1.8rem, 5vw, 2.6rem)', color: '#0A0A0A', margin: '0 0 0.75rem', lineHeight: 1.15 }}>
                   Vous partez de zéro,<br />ou pas ?
                 </h1>
                 <p style={{ color: '#737373', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
-                  Quelques questions rapides pour évaluer ce que vous savez déjà — on adapte votre point de départ en conséquence.
+                  30 questions courtes, du plus simple au plus difficile — répondez du mieux que vous pouvez, on adapte votre point de départ. Vous pouvez passer si vous débutez vraiment.
                 </p>
               </div>
 
-              <div style={{ background: '#F4F4F4', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#A3A3A3', fontFamily: 'var(--font-mono)' }}>
-                    Question {placementIdx + 1}/{PLACEMENT.length}
-                  </span>
-                  <span style={{ fontSize: '0.75rem', color: '#16A34A', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                    {knownCount > 0 ? `${knownCount} déjà acquise${knownCount > 1 ? 's' : ''}` : ''}
-                  </span>
-                </div>
-                <p style={{ fontWeight: 700, fontSize: '1rem', color: '#0A0A0A', margin: '0 0 1.1rem' }}>
-                  {PLACEMENT[placementIdx].question}
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {PLACEMENT[placementIdx].options.map((opt, i) => {
-                    const isSelected = placementSelected === i;
-                    const isCorrect = i === PLACEMENT[placementIdx].correct;
-                    const showResult = placementSelected !== null;
-                    let bg = 'white', border = '#E8E8E8', color = '#0A0A0A';
-                    if (showResult && isCorrect) { bg = 'rgba(34,197,94,0.12)'; border = 'rgba(34,197,94,0.4)'; color = '#16A34A'; }
-                    else if (showResult && isSelected) { bg = 'rgba(220,38,38,0.1)'; border = 'rgba(220,38,38,0.4)'; color = '#DC2626'; }
-                    return (
-                      <button key={i} onClick={() => answerPlacement(i)} disabled={showResult}
-                        style={{ textAlign: 'left', padding: '0.75rem 1rem', borderRadius: '10px', border: `1.5px solid ${border}`, background: bg, color, fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: '0.88rem', cursor: showResult ? 'default' : 'pointer', transition: 'all 0.15s' }}
-                      >
-                        {opt}{showResult && isCorrect && ' ✓'}{showResult && isSelected && !isCorrect && ' ✗'}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <button onClick={skipPlacement}
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#A3A3A3', fontFamily: 'var(--font-ui)', fontSize: '0.82rem', cursor: 'pointer', margin: '0 auto' }}
-              ><SkipForward size={13} /> Passer le test, je repars de zéro</button>
+              <LevelTest onComplete={finishPlacement} onSkip={skipPlacement} />
             </>
           )}
 
@@ -308,7 +236,7 @@ export default function Onboarding({ onComplete }: Props) {
                   Tout est prêt.
                 </h1>
                 <p style={{ color: '#737373', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
-                  Votre programme A1 vous attend. Commencez par l'alphabet cyrillique — la base de tout.
+                  Votre parcours <strong>{assignedLevel}</strong> vous attend — {LEVEL_BLURB[assignedLevel]}
                 </p>
               </div>
 
@@ -318,8 +246,8 @@ export default function Onboarding({ onComplete }: Props) {
                   {[
                     { label: 'Objectif', value: MOTIVATIONS.find(m => m.id === motivation)?.label ?? '—' },
                     { label: 'Intensité', value: GOALS.find(g => g.id === goal)?.time ?? '—' },
-                    { label: 'Programme', value: '8 étapes A1' },
-                    { label: 'Niveau de départ', value: knownCount > 0 ? `${knownCount} leçon${knownCount > 1 ? 's' : ''} déjà acquise${knownCount > 1 ? 's' : ''}` : 'Zéro, comme tout le monde' },
+                    { label: 'Niveau attribué', value: assignedLevel },
+                    { label: 'Recommencer plus tard', value: 'Possible dans Paramètres' },
                   ].map(({ label, value }) => (
                     <div key={label}>
                       <div style={{ fontSize: '0.7rem', color: '#A3A3A3', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em', marginBottom: '3px', textTransform: 'uppercase' }}>{label}</div>

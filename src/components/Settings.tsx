@@ -1,13 +1,46 @@
 import { useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { BADGES } from '../data/badges';
-import { Flame, BookOpen, Layers, Award, Star, Bell } from 'lucide-react';
+import { CEFRLevel } from '../data/lessons';
+import LevelTest from './LevelTest';
+import { Flame, BookOpen, Layers, Award, Star, Bell, GraduationCap, ArrowLeft } from 'lucide-react';
+
+const LEVEL_LABELS: Record<CEFRLevel, string> = {
+  A1: 'Débutant', A2: 'Élémentaire', B1: 'Intermédiaire',
+  B2: 'Intermédiaire avancé', C1: 'Avancé', C2: 'Maîtrise',
+};
 
 export default function Settings() {
   const { state, dispatch, signOut, deleteAccount } = useUser();
   const learnedCards = Object.values(state.srsState).filter(s => s === 'learned').length;
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [switchingLevel, setSwitchingLevel] = useState(false);
+
+  if (switchingLevel) {
+    return (
+      <div style={{ height: '100%', overflowY: 'auto', background: 'var(--background)' }}>
+        <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2rem)' }}>
+          <button
+            onClick={() => setSwitchingLevel(false)}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: 'var(--muted-foreground)', fontFamily: 'var(--font-ui)', fontSize: '0.85rem', cursor: 'pointer', marginBottom: '1.5rem' }}
+          >
+            <ArrowLeft size={14} /> Retour aux paramètres
+          </button>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.4rem', color: 'var(--foreground)', margin: '0 0 0.4rem' }}>
+            Repasser le test de niveau
+          </h2>
+          <p style={{ color: 'var(--muted-foreground)', fontSize: '0.88rem', margin: '0 0 1.5rem' }}>
+            Niveau actuel : <strong>{state.cefrLevel}</strong>. Le nouveau résultat remplacera votre niveau — votre progression déjà acquise reste intacte.
+          </p>
+          <LevelTest
+            onComplete={(level) => { dispatch({ type: 'SET_CEFR_LEVEL', level }); setSwitchingLevel(false); }}
+            onSkip={() => setSwitchingLevel(false)}
+          />
+        </div>
+      </div>
+    );
+  }
 
   async function handleDelete() {
     setDeleting(true);
@@ -70,6 +103,28 @@ export default function Settings() {
                 <div style={{ fontSize: '0.72rem', color: 'var(--muted-foreground)', fontFamily: 'var(--font-ui)' }}>{label}</div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Level */}
+        <section aria-labelledby="level-h">
+          <SectionLabel id="level-h">Parcours d'apprentissage</SectionLabel>
+          <div style={{ background: 'white', border: '1px solid var(--border)', borderRadius: '16px', padding: '1.1rem 1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: 'var(--muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <GraduationCap size={16} style={{ color: 'var(--muted-foreground)' }} aria-hidden="true" />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--foreground)' }}>
+                Niveau {state.cefrLevel} <span style={{ color: 'var(--muted-foreground)', fontWeight: 400 }}>· {LEVEL_LABELS[state.cefrLevel]}</span>
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', marginTop: '1px' }}>Change de parcours en repassant le test</div>
+            </div>
+            <button
+              onClick={() => setSwitchingLevel(true)}
+              style={{ padding: '0.5rem 0.9rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--muted)', color: 'var(--foreground)', fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: '0.8rem', cursor: 'pointer', flexShrink: 0 }}
+            >
+              Changer
+            </button>
           </div>
         </section>
 

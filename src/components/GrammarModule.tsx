@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LESSONS, Lesson, SubLesson, isLessonComplete, lessonXpReward, CEFR_LEVELS } from '../data/lessons';
 import { useUser } from '../contexts/UserContext';
 import MatchExercisePlayer from './MatchExercisePlayer';
+import PhoneticHover from './PhoneticHover';
 
 const ALL_LESSONS = LESSONS;
 
@@ -23,15 +24,25 @@ const MODULE_COLORS: Record<string, string> = {
   numbers: 'var(--success)',
 };
 
-/* ── Sub-lesson content + its own graded evaluation ── */
+/* ── Sub-lesson content, broken into small digestible steps ── */
 function SubLessonView({ lesson, subLesson, onBack, onStartExercises }: {
   lesson: Lesson; subLesson: SubLesson; onBack: () => void; onStartExercises: () => void;
 }) {
   const { state } = useUser();
   const isDone = state.completedLessons.includes(subLesson.id);
+  const [step, setStep] = useState(0);
+
+  // Step 0 = intro, 1..N = one section each, last = "ready" summary.
+  const totalSteps = subLesson.sections.length + 2;
+  const isIntro = step === 0;
+  const isReady = step === totalSteps - 1;
+  const section = !isIntro && !isReady ? subLesson.sections[step - 1] : null;
+
+  function next() { setStep(s => Math.min(s + 1, totalSteps - 1)); }
+  function prev() { setStep(s => Math.max(s - 1, 0)); }
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto mod-pad gap-6 animate-fade-in">
+    <div className="flex flex-col h-full overflow-y-auto mod-pad gap-5 animate-fade-in">
       <div className="flex items-center gap-3 flex-wrap">
         <button
           onClick={onBack}
@@ -59,73 +70,127 @@ function SubLessonView({ lesson, subLesson, onBack, onStartExercises }: {
         </h2>
       </div>
 
-      <div
-        className="p-5 rounded-2xl"
-        style={{ background: 'rgba(0,212,184,0.08)', border: '1px solid rgba(0,212,184,0.2)' }}
-      >
-        <p style={{ color: 'var(--secondary-foreground)' }}>{subLesson.intro}</p>
+      {/* Step dots */}
+      <div className="flex items-center gap-1.5" role="tablist" aria-label="Étapes de la sous-leçon">
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <div
+            key={i}
+            role="tab"
+            aria-selected={i === step}
+            style={{
+              height: '4px', flex: 1, borderRadius: '2px',
+              background: i <= step ? 'var(--primary)' : 'var(--muted)',
+              transition: 'background 0.2s',
+            }}
+          />
+        ))}
       </div>
 
-      {subLesson.sections.map((section, i) => (
-        <div key={i} className="space-y-4">
-          <h3 className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>
-            {section.heading}
-          </h3>
-          <p className="leading-relaxed" style={{ color: 'var(--secondary-foreground)' }}>{section.body}</p>
+      {/* Step content */}
+      <div className="flex-1" key={step}>
+        {isIntro && (
+          <div
+            className="p-5 rounded-2xl animate-slide-up"
+            style={{ background: 'rgba(0,212,184,0.08)', border: '1px solid rgba(0,212,184,0.2)' }}
+          >
+            <p style={{ color: 'var(--secondary-foreground)' }}>{subLesson.intro}</p>
+          </div>
+        )}
 
-          {section.examples && (
-            <div className="space-y-2">
-              {section.examples.map((ex, j) => (
-                <div key={j} className="grammar-example">
-                  <span className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }} lang="ru">
-                    {ex.ru}
-                  </span>
-                  <span className="text-sm" style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)' }}>
-                    {ex.translit}
-                  </span>
-                  <span style={{ color: 'var(--secondary-foreground)' }}>{ex.fr}</span>
-                </div>
-              ))}
-            </div>
-          )}
+        {section && (
+          <div className="space-y-4 animate-slide-up">
+            <h3 className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>
+              {section.heading}
+            </h3>
+            <p className="leading-relaxed" style={{ color: 'var(--secondary-foreground)' }}>{section.body}</p>
 
-          {section.table && (
-            <div className="rounded-xl overflow-x-auto" style={{ border: '1px solid var(--border)' }}>
-              <table className="w-full text-sm" role="table">
-                <thead>
-                  <tr style={{ background: 'var(--secondary)' }}>
-                    {section.table.headers.map((h) => (
-                      <th key={h} className="px-4 py-3 text-left font-semibold" style={{ color: 'var(--muted-foreground)' }} scope="col">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {section.table.rows.map((row, ri) => (
-                    <tr key={ri} style={{ background: ri % 2 === 0 ? 'var(--card)' : 'var(--secondary)', borderTop: '1px solid var(--border)' }}>
-                      {row.map((cell, ci) => (
-                        <td key={ci} className="px-4 py-3" style={{ color: ci === 0 ? 'var(--foreground)' : 'var(--secondary-foreground)', fontFamily: ci === 0 ? 'var(--font-display)' : 'inherit' }}>
-                          {cell}
-                        </td>
+            {section.examples && (
+              <div className="space-y-2">
+                {section.examples.map((ex, j) => (
+                  <div key={j} className="grammar-example">
+                    <span className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }} lang="ru">
+                      <PhoneticHover text={ex.ru} phonetic={ex.translit} rate={0.72} />
+                    </span>
+                    <span className="text-sm" style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)' }}>
+                      {ex.translit}
+                    </span>
+                    <span style={{ color: 'var(--secondary-foreground)' }}>{ex.fr}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {section.table && (
+              <div className="rounded-xl overflow-x-auto" style={{ border: '1px solid var(--border)' }}>
+                <table className="w-full text-sm" role="table">
+                  <thead>
+                    <tr style={{ background: 'var(--secondary)' }}>
+                      {section.table.headers.map((h) => (
+                        <th key={h} className="px-4 py-3 text-left font-semibold" style={{ color: 'var(--muted-foreground)' }} scope="col">
+                          {h}
+                        </th>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      ))}
+                  </thead>
+                  <tbody>
+                    {section.table.rows.map((row, ri) => (
+                      <tr key={ri} style={{ background: ri % 2 === 0 ? 'var(--card)' : 'var(--secondary)', borderTop: '1px solid var(--border)' }}>
+                        {row.map((cell, ci) => (
+                          <td key={ci} className="px-4 py-3" style={{ color: ci === 0 ? 'var(--foreground)' : 'var(--secondary-foreground)', fontFamily: ci === 0 ? 'var(--font-display)' : 'inherit' }}>
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
 
-      <div className="sticky bottom-0 pt-4 pb-2" style={{ background: 'var(--background)' }}>
-        <button
-          onClick={onStartExercises}
-          className="w-full py-4 rounded-2xl font-bold text-lg transition-all hover:opacity-90 active:scale-[0.99]"
-          style={{ background: 'var(--primary)', color: 'white', fontFamily: 'var(--font-display)' }}
-        >
-          {isDone ? 'Repasser l\'évaluation' : `Passer l'évaluation`} → {subLesson.exercises.length} questions
-        </button>
+        {isReady && (
+          <div className="flex flex-col items-center text-center gap-3 py-6 animate-slide-up">
+            <span className="text-4xl" aria-hidden="true">✅</span>
+            <h3 className="text-lg font-bold" style={{ fontFamily: 'var(--font-display)', color: 'var(--foreground)' }}>
+              Prêt·e pour l'évaluation
+            </h3>
+            <p style={{ color: 'var(--muted-foreground)', maxWidth: '380px' }}>
+              {subLesson.exercises.length} questions, notées sur {subLesson.maxScore}. Vous pouvez revenir en arrière pour relire une étape.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Nav */}
+      <div className="sticky bottom-0 pt-4 pb-2 flex gap-3" style={{ background: 'var(--background)' }}>
+        {step > 0 && (
+          <button
+            onClick={prev}
+            className="px-5 py-4 rounded-2xl font-semibold transition-all hover:opacity-80"
+            style={{ background: 'var(--muted)', color: 'var(--foreground)' }}
+            aria-label="Étape précédente"
+          >
+            ←
+          </button>
+        )}
+        {!isReady ? (
+          <button
+            onClick={next}
+            className="flex-1 py-4 rounded-2xl font-bold text-lg transition-all hover:opacity-90 active:scale-[0.99]"
+            style={{ background: 'var(--primary)', color: 'white', fontFamily: 'var(--font-display)' }}
+          >
+            Continuer →
+          </button>
+        ) : (
+          <button
+            onClick={onStartExercises}
+            className="flex-1 py-4 rounded-2xl font-bold text-lg transition-all hover:opacity-90 active:scale-[0.99]"
+            style={{ background: 'var(--primary)', color: 'white', fontFamily: 'var(--font-display)' }}
+          >
+            {isDone ? 'Repasser l\'évaluation' : `Passer l'évaluation`}
+          </button>
+        )}
       </div>
     </div>
   );
