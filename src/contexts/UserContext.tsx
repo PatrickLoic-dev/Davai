@@ -45,6 +45,7 @@ export type Action =
   | { type: 'COMPLETE_ONBOARDING' }
   | { type: 'CLEAR_STREAK_IGNITED' }
   | { type: 'SET_CEFR_LEVEL'; level: CEFRLevel }
+  | { type: 'RECONCILE_STREAK' }
   | { type: 'HYDRATE'; state: UserState };
 
 function xpToLevel(xp: number): number {
@@ -215,6 +216,16 @@ export function userReducer(state: UserState, action: Action): UserState {
     case 'SET_CEFR_LEVEL':
       return { ...state, cefrLevel: action.level };
 
+    case 'RECONCILE_STREAK': {
+      // A streak that isn't kept up shows as broken (0) the moment you
+      // reopen the app — not just retroactively, the next time you study.
+      if (!state.lastActiveDate || state.streak === 0) return state;
+      const today = todayISO();
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      if (state.lastActiveDate === today || state.lastActiveDate === yesterday) return state;
+      return { ...state, streak: 0 };
+    }
+
     default:
       return state;
   }
@@ -260,6 +271,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
+
+  /* Reconcile the streak counter whenever the recorded last-active date
+     changes (on hydration, and after each activity) — so a broken streak
+     shows as 0 immediately, not just the next time the user studies. */
+  useEffect(() => {
+    dispatch({ type: 'RECONCILE_STREAK' });
+  }, [state.lastActiveDate]);
 
   /* Supabase session → remote progress. Runs once on mount, and again
      whenever auth state changes (login, logout, token refresh). */
